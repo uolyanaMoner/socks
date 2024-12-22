@@ -2,10 +2,7 @@ const paymob = require("../../helpers/paymob");
 const Order = require("../../models/Order");
 const Cart = require("../../models/Cart");
 const Product = require("../../models/Product");
-const mongoose = require("mongoose");
-const axios = require("axios");
-const { LocalStorage } = require("node-localstorage");
-const localStorage = new LocalStorage("./scratch");
+
 
 
 // const initiatePayment = async (req, res) => {
