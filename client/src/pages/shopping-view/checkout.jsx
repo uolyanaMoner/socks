@@ -313,7 +313,7 @@ function ShoppingCheckout() {
         sessionStorage.setItem("paymentMethod", "cod"); // إذا كانت الطريقة هي الدفع عند الاستلام
 
         // الانتقال إلى paymob-return بعد حفظ الـ orderId
-        window.location.href = "/shop/paymob-return";
+        window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
       } else {
         toast({
           title: "Failed to create order. Try again.",
@@ -362,7 +362,7 @@ function ShoppingCheckout() {
               className="w-full p-2 border border-gray-300 rounded mt-2"
             >
               <option value="">اختيار طريقة الدفع</option>
-              <option value="paymob">Paymob</option>
+              {/* <option value="paymob">Paymob</option> */}
               <option value="cod">دفع عند الاستلام</option>
             </select>
           </div>
