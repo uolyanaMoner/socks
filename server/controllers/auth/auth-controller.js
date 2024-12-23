@@ -68,22 +68,10 @@ const loginUser = async (req, res) => {
       { expiresIn: "60m" }
     );
 
-    // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" }).json({
-    //   // res.cookie("token", token, { httpOnly: true, secure: false }).json({
-    //   success: true,
-    //   message: "Logged in successfully",
-    //   user: {
-    //     email: checkUser.email,
-    //     role: checkUser.role,
-    //     id: checkUser._id,
-    //     userName: checkUser.userName,
-    //   },
-    // });
-
-    res.status(200).json({
+    res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" }).json({
+      // res.cookie("token", token, { httpOnly: true, secure: false }).json({
       success: true,
       message: "Logged in successfully",
-      token,
       user: {
         email: checkUser.email,
         role: checkUser.role,
@@ -110,33 +98,12 @@ const logoutUser = (req, res) => {
 };
 
 //auth middleware
-// const authMiddleware = async (req, res, next) => {
-//   const token = req.cookies.token;
-//   if (!token)
-//     return res.status(401).json({
-//       success: false,
-//       message: "Unauthorized user!",
-//     });
-
-//   try {
-//     const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     res.status(401).json({
-//       success: false,
-//       message: "Unauthorized user!",
-//     });
-//   }
-// };
-
 const authMiddleware = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies.token;
   if (!token)
     return res.status(401).json({
       success: false,
-      message: "Unauthorized user!",
+      message: "Unauthorised user!",
     });
 
   try {
@@ -146,7 +113,7 @@ const authMiddleware = async (req, res, next) => {
   } catch (error) {
     res.status(401).json({
       success: false,
-      message: "Unauthorized user!",
+      message: "Unauthorised user!",
     });
   }
 };
