@@ -313,7 +313,7 @@ function ShoppingCheckout() {
         sessionStorage.setItem("paymentMethod", "cod"); // إذا كانت الطريقة هي الدفع عند الاستلام
 
         // الانتقال إلى paymob-return بعد حفظ الـ orderId
-        window.location.href = `/shop/paymob-return`;
+        window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
       } else {
         toast({
           title: "Failed to create order. Try again.",
