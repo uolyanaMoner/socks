@@ -106,7 +106,7 @@ function PaymobReturnPage() {
           if (data?.payload?.success) {
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-            window.location.href = "/shop/payment-success";
+            window.location.href = `${import.meta.env.VITE_FRONT_URL}/shop/payment-success`;
           }
         })
         .catch((error) =>
