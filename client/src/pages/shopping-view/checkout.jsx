@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { shippingCosts } from "@/config";
 import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router-dom";
 
 function ShoppingCheckout() {
   const { cartItems } = useSelector((state) => state.shopCart);
@@ -16,6 +17,7 @@ function ShoppingCheckout() {
   const [government, setGovernment] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [paymentMethod, setPaymentMethod] = useState(""); // حفظ طريقة الدفع المختارة
 
@@ -313,7 +315,9 @@ function ShoppingCheckout() {
         sessionStorage.setItem("paymentMethod", "cod"); // إذا كانت الطريقة هي الدفع عند الاستلام
 
         // الانتقال إلى paymob-return بعد حفظ الـ orderId
-        window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
+        // window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
+        navigate("/shop/paymob-return");
+
       } else {
         toast({
           title: "Failed to create order. Try again.",

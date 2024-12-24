@@ -22,6 +22,7 @@ import { checkAuth } from "./store/auth-slice";
 import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 import SearchProducts from "./pages/shopping-view/search";
 import PaymobReturnPage from "./pages/shopping-view/paymob";
+import MobileView from "./components/shopping-view/productMobileView";
 
 
 function App() {
@@ -46,13 +47,14 @@ function App() {
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
-        <Route
+        {/* <Route
         path="/"
         element={
           <CheckAuth isAuthenticated={isAuthenticated} user={user}>
           </CheckAuth>
         }
-        />
+        /> */}
+         <Route path="/" element={<ShoppingHome />} />
         <Route
           path="/auth"
           element={
@@ -89,6 +91,7 @@ function App() {
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={<ShoppingAccount />} />
+          <Route path="mobile-view" element={<MobileView />} />
           <Route path="paymob-return" element={<PaymobReturnPage />} />
           <Route path="payment-success" element={<PaymentSuccessPage/>}/>
           <Route path="search" element={<SearchProducts/>}/>
