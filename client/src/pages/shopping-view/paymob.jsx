@@ -79,7 +79,7 @@
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { capturePayment } from "@/store/shop/order-slice";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -89,7 +89,6 @@ function PaymobReturnPage() {
   const params = new URLSearchParams(location.search);
   const paymentMethod = sessionStorage.getItem("paymentMethod"); // طريقة الدفع
   const orderId = sessionStorage.getItem("currentOrderId"); // رقم الطلب
-  const navigate = useNavigate();
   useEffect(() => {
     console.log("Payment method: ", paymentMethod);
     console.log("Order ID: ", orderId);
@@ -107,9 +106,7 @@ function PaymobReturnPage() {
           if (data?.payload?.success) {
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-            window.location.href = `/shop/payment-success`;
-            // navigate("/shop/payment-success");
-
+            window.location.href = `${import.meta.env.VITE_API_URL}/shop/payment-success`;
           }
         })
         .catch((error) =>
