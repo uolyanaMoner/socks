@@ -79,7 +79,7 @@
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { capturePayment } from "@/store/shop/order-slice";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -89,6 +89,8 @@ function PaymobReturnPage() {
   const params = new URLSearchParams(location.search);
   const paymentMethod = sessionStorage.getItem("paymentMethod"); // طريقة الدفع
   const orderId = sessionStorage.getItem("currentOrderId"); // رقم الطلب
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log("Payment method: ", paymentMethod);
     console.log("Order ID: ", orderId);
@@ -104,15 +106,22 @@ function PaymobReturnPage() {
       dispatch(capturePayment({ orderId }))
         .then((data) => {
           if (data?.payload?.success) {
+            // إزالة البيانات من sessionStorage
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-            window.location.href = `${import.meta.env.VITE_API_URL}/shop/payment-success`;
+    
+            // التنقل باستخدام navigate
+            navigate('/shop/payment-success', { replace: true });
+    
+            // إعادة تحميل الصفحة
+            window.location.reload();
           }
         })
         .catch((error) =>
           console.error("Error during COD processing: ", error)
         );
-    } else if (paymentMethod === "paymob") {
+    } 
+    else if (paymentMethod === "paymob") {
       const paymentId = params.get("id");
       const payerId = params.get("owner");
 
