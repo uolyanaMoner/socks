@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "index.html",
       "use": "@vercel/static-build"
     }
   ],
   "routes": [
     {
-      "src": "/shop/paymob-return",
-      "dest": "/shop/paymob-return"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/shop/payment-success",
-      "destination": "/"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
