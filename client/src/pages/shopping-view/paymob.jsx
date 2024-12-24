@@ -94,6 +94,7 @@ function PaymobReturnPage() {
   useEffect(() => {
     console.log("Payment method: ", paymentMethod);
     console.log("Order ID: ", orderId);
+    console.log("VITE_FRONT_URL:", import.meta.env.VITE_FRONT_URL);
 
     if (!orderId) {
       console.error("No orderId found in sessionStorage.");
@@ -106,22 +107,17 @@ function PaymobReturnPage() {
       dispatch(capturePayment({ orderId }))
         .then((data) => {
           if (data?.payload?.success) {
-            // إزالة البيانات من sessionStorage
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-    
-            // التنقل باستخدام navigate
-            navigate('/shop/payment-success', { replace: true });
-    
-            // إعادة تحميل الصفحة
-            window.location.reload();
+            navigate('/shop/payment-success');
+            window.location.reload(); // لإعادة تحميل الصفحة
           }
+          
         })
         .catch((error) =>
           console.error("Error during COD processing: ", error)
         );
-    } 
-    else if (paymentMethod === "paymob") {
+    } else if (paymentMethod === "paymob") {
       const paymentId = params.get("id");
       const payerId = params.get("owner");
 
