@@ -92,7 +92,6 @@ function HeaderRightContent() {
 
   function handleLogout() {
     dispatch(logoutUser());
-    window.location.reload(); // لإعادة تحميل الصفحة
     navigate("/shop/home");
   }
 
