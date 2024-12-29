@@ -76,7 +76,6 @@
 // }
 
 // export default PaymobReturnPage;
-
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -109,10 +108,8 @@ function PaymobReturnPage() {
           if (data?.payload?.success) {
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-            navigate('/shop/payment-success');
-            window.location.reload(); // لإعادة تحميل الصفحة
+            window.location.replace("/shop/payment-success"); // إعادة تحميل الصفحة بشكل صحيح
           }
-          
         })
         .catch((error) =>
           console.error("Error during COD processing: ", error)
@@ -130,7 +127,7 @@ function PaymobReturnPage() {
             if (data?.payload?.success) {
               sessionStorage.removeItem("currentOrderId");
               sessionStorage.removeItem("paymentMethod");
-              window.location.href = "/shop/payment-success";
+              window.location.replace("/shop/payment-success"); // إعادة تحميل الصفحة
             }
           })
           .catch((error) =>
