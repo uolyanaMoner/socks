@@ -76,24 +76,26 @@
 // }
 
 // export default PaymobReturnPage;
+
+
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { capturePayment } from "@/store/shop/order-slice";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { clearCart } from "@/store/shop/cart-slice";
 
 function PaymobReturnPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const paymentMethod = sessionStorage.getItem("paymentMethod"); // طريقة الدفع
-  const orderId = sessionStorage.getItem("currentOrderId"); // رقم الطلب
+  const paymentMethod = sessionStorage.getItem("paymentMethod");
+  const orderId = sessionStorage.getItem("currentOrderId");
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Payment method: ", paymentMethod);
     console.log("Order ID: ", orderId);
-    console.log("VITE_FRONT_URL:", import.meta.env.VITE_FRONT_URL);
 
     if (!orderId) {
       console.error("No orderId found in sessionStorage.");
@@ -101,14 +103,14 @@ function PaymobReturnPage() {
     }
 
     if (paymentMethod === "cod") {
-      // معالجة الدفع عند الاستلام
       console.log("Processing COD payment...");
       dispatch(capturePayment({ orderId }))
         .then((data) => {
           if (data?.payload?.success) {
             sessionStorage.removeItem("currentOrderId");
             sessionStorage.removeItem("paymentMethod");
-            window.location.replace("/shop/payment-success"); // إعادة تحميل الصفحة بشكل صحيح
+            dispatch(clearCart()); // تفريغ السلة بعد الدفع
+            navigate('/shop/payment-success'); // التوجيه باستخدام navigate
           }
         })
         .catch((error) =>
@@ -127,7 +129,8 @@ function PaymobReturnPage() {
             if (data?.payload?.success) {
               sessionStorage.removeItem("currentOrderId");
               sessionStorage.removeItem("paymentMethod");
-              window.location.replace("/shop/payment-success"); // إعادة تحميل الصفحة
+              dispatch(clearCart()); // تفريغ السلة بعد الدفع
+              navigate('/shop/payment-success'); // التوجيه باستخدام navigate
             }
           })
           .catch((error) =>
@@ -137,7 +140,7 @@ function PaymobReturnPage() {
     } else {
       console.error("Invalid payment method.");
     }
-  }, [paymentMethod, orderId, dispatch, params]);
+  }, [paymentMethod, orderId, dispatch, params, navigate]);
 
   return (
     <Card>
