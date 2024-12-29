@@ -51,16 +51,43 @@ export const capturePayment = createAsyncThunk(
 
 
 
+// export const getAllOrdersByUserId = createAsyncThunk(
+//   "/order/getAllOrdersByUserId",
+//   async (userId) => {
+//     const response = await axios.get(
+//       `${import.meta.env.VITE_API_URL}/api/shop/order/list/${userId}`
+//     );
+
+//     return response.data;
+//   }
+// );
+
 export const getAllOrdersByUserId = createAsyncThunk(
   "/order/getAllOrdersByUserId",
-  async (userId) => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/shop/order/list/${userId}`
-    );
+  async (_, thunkAPI) => {
+    // الحصول على userId من Redux أو localStorage
+    const state = thunkAPI.getState();
+    const userId = state.auth?.user?.id || localStorage.getItem("guestUserId");
 
-    return response.data;
+    // إذا لم يكن هناك userId، نقوم بإنشاء واحد جديد للزائر
+    if (!userId) {
+      const generatedUserId = `guest-${Date.now()}`;
+      localStorage.setItem("guestUserId", generatedUserId);
+      return thunkAPI.rejectWithValue("Guest user ID generated. Retry fetching.");
+    }
+
+    try {
+      // إرسال الطلب إلى السيرفر باستخدام userId
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/shop/order/list/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
 );
+
 
 export const getOrderDetails = createAsyncThunk(
   "/order/getOrderDetails",

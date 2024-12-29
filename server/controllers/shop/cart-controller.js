@@ -672,10 +672,110 @@ const Cart = require("../../models/Cart");
 const Product = require("../../models/Product");
 
 // إضافة عنصر للسلة مع التحقق من اللون
+// const addToCart = async (req, res) => {
+//   try {
+//     const { userId, productId, quantity, color, additionalDetails } = req.body;
+
+//     if (!userId || !productId || quantity <= 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid data provided!",
+//       });
+//     }
+
+//     const product = await Product.findById(productId);
+//     if (!product) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Product not found!",
+//       });
+//     }
+
+//     let cart = await Cart.findOne({ userId });
+//     if (!cart) {
+//       cart = new Cart({ userId, items: [] });
+//     }
+
+//     const findCurrentProductIndex = cart.items.findIndex(
+//       (item) => item.productId.toString() === productId && item.color === color
+//     );
+
+//     if (findCurrentProductIndex === -1) {
+//       cart.items.push({ productId, quantity, color, additionalDetails });
+//     } else {
+//       cart.items[findCurrentProductIndex].quantity += quantity;
+//     }
+
+//     await cart.save();
+
+//     res.status(200).json({
+//       success: true,
+//       data: cart,
+//     });
+//   } catch (error) {
+//     console.error("Error in addToCart:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
+
+
+// const fetchCartItems = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     if (!userId) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "User ID is required!",
+//       });
+//     }
+
+//     const cart = await Cart.findOne({ userId }).populate({
+//       path: "items.productId",
+//       select: "title image price salePrice",
+//     });
+
+//     if (!cart) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Cart not found!",
+//       });
+//     }
+
+//     const formattedItems = cart.items.map((item) => ({
+//       productId: item?.productId?._id,
+//       title: item?.productId?.title,
+//       image: item?.productId?.image,
+//       price: item?.productId?.price,
+//       salePrice: item?.productId?.salePrice,
+//       color: item?.color,
+//       quantity: item?.quantity,
+//       additionalDetails: item?.additionalDetails || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         ...cart._doc,
+//         items: formattedItems,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error in fetchCartItems:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
 const addToCart = async (req, res) => {
   try {
     const { userId, productId, quantity, color, additionalDetails } = req.body;
 
+    // التحقق من البيانات المطلوبة
     if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -836,84 +936,6 @@ const updateCartItemQty = async (req, res) => {
   }
 };
 
-// تحديث كمية عنصر في السلة مع التحقق من اللون
-// const updateCartItemQty = async (req, res) => {
-//   try {
-//     const { userId, productId, quantity, color } = req.body;
-
-//     if (!userId || !productId || quantity <= 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "بيانات غير صحيحة!",
-//       });
-//     }
-
-//     const cart = await Cart.findOne({ userId });
-//     if (!cart) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "السلة غير موجودة!",
-//       });
-//     }
-
-//     const findCurrentProductIndex = cart.items.findIndex(
-//       (item) => item.productId.toString() === productId && item.color === color
-//     );
-
-//     if (findCurrentProductIndex === -1) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "العنصر غير موجود في السلة!",
-//       });
-//     }
-
-//     cart.items[findCurrentProductIndex].quantity = quantity;
-//     await cart.save();
-
-//     res.status(200).json({
-//       success: true,
-//       data: cart,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "خطأ في الخادم!",
-//     });
-//   }
-// };
-
-// حذف عنصر من السلة مع التحقق من اللون
-// const deleteCartItem = async (req, res) => {
-//   try {
-//     const { userId, productId, color } = req.params;
-
-//     const cart = await Cart.findOne({ userId });
-//     if (!cart) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "السلة غير موجودة!",
-//       });
-//     }
-
-//     cart.items = cart.items.filter(
-//       (item) => !(item.productId.toString() === productId && item.color === color)
-//     );
-
-//     await cart.save();
-
-//     res.status(200).json({
-//       success: true,
-//       data: cart,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "خطأ في الخادم!",
-//     });
-//   }
-// };
 
 const deleteCartItem = async (req, res) => {
   try {

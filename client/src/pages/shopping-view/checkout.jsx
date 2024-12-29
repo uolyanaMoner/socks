@@ -18,8 +18,15 @@ function ShoppingCheckout() {
   const [shippingCost, setShippingCost] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
-
   const [paymentMethod, setPaymentMethod] = useState(""); // حفظ طريقة الدفع المختارة
+  const userId = user?.id || localStorage.getItem("guestUserId");
+
+  // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
+  if (!userId) {
+    const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
+    localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
+  }
+
 
   const handlePaymentSelection = async () => {
     if (paymentMethod === "") {
@@ -98,6 +105,8 @@ function ShoppingCheckout() {
         }, 0)
       : 0; // إذا كانت العربة فارغة، لا يوجد خصم
 
+
+      
   const handlePaymobPayment = async (method) => {
     if (cartItems.length === 0) {
       toast({
@@ -122,8 +131,6 @@ function ShoppingCheckout() {
       });
       return;
     }
-
-    
 
     if (government === null) {
       toast({
@@ -150,7 +157,7 @@ function ShoppingCheckout() {
       };
 
       const orderData = {
-        userId: user?.id,
+        userId: userId,
         cartId: cartItems?._id,
         cartItems: cartItems.items.map((singleCartItem) => ({
           productId: singleCartItem?.productId,
@@ -217,6 +224,8 @@ function ShoppingCheckout() {
   };
 
   const handlePayment = async (method) => {
+
+
     if (cartItems.length === 0) {
       toast({
         title: "Your cart is empty. Please add items to proceed",
@@ -256,7 +265,7 @@ function ShoppingCheckout() {
     };
 
     const orderData = {
-      userId: user?.id,
+      userId: userId,
       cartId: cartItems?._id,
       cartItems: cartItems.items.map((singleCartItem) => ({
         productId: singleCartItem?.productId,
@@ -317,7 +326,6 @@ function ShoppingCheckout() {
         // الانتقال إلى paymob-return بعد حفظ الـ orderId
         // window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
         navigate("/shop/paymob-return");
-
       } else {
         toast({
           title: "Failed to create order. Try again.",

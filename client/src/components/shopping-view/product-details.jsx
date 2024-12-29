@@ -589,27 +589,40 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     // }
 
     // تحقق من اللون والكمية لإرسال التفاصيل
+    const userId = user?.id || localStorage.getItem("guestUserId");
+
+    // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
+    if (!userId) {
+      const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
+      localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
+    }
+
     const shouldSubmitDetails =
       (selectedColor === "black&white" || selectedColor === "white&black") &&
       (quantity === 5 || quantity === 10);
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: getCurrentProductId,
-        quantity,
-        color: selectedColor || "",
-        additionalDetails: shouldSubmitDetails ? additionalDetails : "",
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-        toast({
-          title: `Product added to cart${
-            shouldSubmitDetails ? " with additional details" : ""
-          }`,
-        });
-      }
-    });
+    if (userId) {
+      dispatch(
+        addToCart({
+          userId,
+          productId: getCurrentProductId,
+          quantity,
+          color: selectedColor || "",
+          additionalDetails: shouldSubmitDetails ? additionalDetails : "",
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(userId)); // تمرير userId بدلاً من user?.id
+          toast({
+            title: "Product is added to cart",
+          });
+        }
+      });
+    } else {
+      toast({
+        title: "Unable to get User ID",
+        variant: "destructive",
+      });
+    }
   }
 
   function handleDialogClose() {

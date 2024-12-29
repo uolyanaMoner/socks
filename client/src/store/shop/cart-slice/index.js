@@ -24,15 +24,32 @@ export const addToCart = createAsyncThunk(
   }
 );
 
+// export const fetchCartItems = createAsyncThunk(
+//   "cart/fetchCartItems",
+//   async (userId) => {
+//     const response = await axios.get(
+//       `${import.meta.env.VITE_API_URL}/api/shop/cart/get/${userId}`
+//     );
+//     return response.data;
+//   }
+// );
+
 export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async (userId) => {
+    if (!userId) {
+      throw new Error("User ID is required"); // إضافة تحقق من وجود userId
+    }
+    
     const response = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/shop/cart/get/${userId}`
     );
     return response.data;
   }
 );
+
+
+
 
 export const deleteCartItem = createAsyncThunk(
   "cart/deleteCartItem",

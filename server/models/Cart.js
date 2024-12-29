@@ -38,14 +38,51 @@
 // module.exports = mongoose.model("Cart", CartSchema);
 
 
-// ملف Cart Schema
+// // ملف Cart Schema
+// const mongoose = require("mongoose");
+
+// const CartSchema = new mongoose.Schema(
+//   {
+//     userId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
+//     },
+//     items: [
+//       {
+//         productId: {
+//           type: mongoose.Schema.Types.ObjectId,
+//           ref: "Product",
+//           required: true,
+//         },
+//         quantity: {
+//           type: Number,
+//           required: true,
+//           min: 1,
+//         },
+//         color: {
+//           type: String,
+//           required: false,
+//         },
+//         additionalDetails: {
+//           type: String,
+//           required: false,
+//         },
+//       },
+//     ],
+//   },
+//   { timestamps: true }
+// );
+
+// module.exports = mongoose.model("Cart", CartSchema);
+
+
 const mongoose = require("mongoose");
 
 const CartSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: mongoose.Schema.Types.Mixed, // يسمح بتخزين ObjectId أو String
       required: true,
     },
     items: [
