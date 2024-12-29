@@ -273,7 +273,7 @@ function AdminOrderDetailsView({ orderDetails }) {
         <div className="grid gap-2">
           <p className="font-medium">معلومات الشحن</p>
           <div className="grid grid-cols-2">
-          <span>الاسم: {user?.userName}</span>
+          <span>الاسم: {user?.userName || orderDetails?.addressInfo?.fullName}</span>
           <span>العنوان: {orderDetails?.addressInfo?.address}</span>
           <span>المدينة: {orderDetails?.addressInfo?.city}</span>
           <span>الهاتف: {orderDetails?.addressInfo?.phone}</span>

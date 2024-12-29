@@ -161,6 +161,7 @@ import { useToast } from "../ui/use-toast";
 
 // البيانات الأولية للنموذج
 const initialAddressFormData = {
+  fullName: "",
   address: "",
   city: "",
   phone: "",
@@ -256,6 +257,7 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
       city: getCurrentAddress?.city,
       phone: getCurrentAddress?.phone,
       notes: getCurrentAddress?.notes,
+      fullName: getCurrentAddress?.fullName,
     });
   }
 

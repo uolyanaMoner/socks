@@ -25,6 +25,7 @@ function AddressCard({
           selectedId === addressInfo?._id ? "border-black" : ""
         } grid p-4 gap-4`}
       >
+        <Label>Full Name: {addressInfo?.fullName}</Label>
         <Label>Address: {addressInfo?.address}</Label>
         <Label>City: {addressInfo?.city}</Label>
         <Label>Phone: {addressInfo?.phone}</Label>
