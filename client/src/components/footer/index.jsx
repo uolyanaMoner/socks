@@ -17,7 +17,7 @@ function Footer() {
           <h2 className="font-bold text-xl mb-2">Contact Us</h2>
           <div className="space-y-2">
             <p className="text-md">Phone: 01021550979</p>
-            <p className="text-md break-words">Email: watermelon@gmail.com</p>
+            {/* <p className="text-md break-words">Email: watermelon@gmail.com</p> */}
           </div>
           <div className="flex space-x-4 mt-4">
             <a
