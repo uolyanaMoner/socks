@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { sortOptions } from "@/config";
+import { fetchAllProducts } from "@/store/admin/products-slice";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
@@ -56,27 +57,110 @@ function ShoppingListing() {
     setSort(value);
   }
 
+  // function handleFilter(getSectionId, getCurrentOption) {
+  //   let cpyFilters = { ...filters };
+  //   const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+
+  //   if (indexOfCurrentSection === -1) {
+  //     cpyFilters = {
+  //       ...cpyFilters,
+  //       [getSectionId]: [getCurrentOption],
+  //     };
+  //   } else {
+  //     const indexOfCurrentOption =
+  //       cpyFilters[getSectionId].indexOf(getCurrentOption);
+
+  //     if (indexOfCurrentOption === -1)
+  //       cpyFilters[getSectionId].push(getCurrentOption);
+  //     else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+  //   }
+
+  //   setFilters(cpyFilters);
+  //   sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+  // }
+  // function handleFilter(getSectionId, getCurrentOption) {
+  //   let cpyFilters = { ...filters };
+  //   const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+
+  //   // إذا لم يكن القسم موجودًا في الفلاتر، نقوم بإضافته مع الخيار المحدد
+  //   if (indexOfCurrentSection === -1) {
+  //     cpyFilters = {
+  //       ...cpyFilters,
+  //       [getSectionId]: [getCurrentOption],
+  //     };
+  //   } else {
+  //     // إذا كان القسم موجودًا بالفعل، نبحث عن الخيار المحدد في هذا القسم
+  //     const indexOfCurrentOption =
+  //       cpyFilters[getSectionId].indexOf(getCurrentOption);
+
+  //     // إذا لم يكن الخيار موجودًا، نقوم بإضافته
+  //     if (indexOfCurrentOption === -1) {
+  //       cpyFilters[getSectionId].push(getCurrentOption);
+  //     } else {
+  //       // إذا كان الخيار موجودًا، نقوم بإزالته
+  //       cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+  //     }
+  //   }
+
+  //   // إذا كانت الفلاتر تشمل "Men" أو "Women"، نضيف "Unisex" تلقائيًا
+  //   if (cpyFilters.category) {
+  //     const includesMen = cpyFilters.category.includes("men");
+  //     const includesWomen = cpyFilters.category.includes("women");
+    
+  //     if (includesMen || includesWomen) {
+  //       // إضافة "Unisex" إذا لم يكن موجودًا
+  //       if (!cpyFilters.category.includes("unisex")) {
+  //         cpyFilters.category.push("unisex");
+  //       }
+  //     }
+  //   }
+    
+  //   // تحديث الفلاتر في الحالة (State)
+  //   setFilters({ ...cpyFilters });
+    
+  //   // حفظ الفلاتر في sessionStorage
+  //   sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+  // }    
+
   function handleFilter(getSectionId, getCurrentOption) {
     let cpyFilters = { ...filters };
     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
-
+  
+    // إدارة إضافة وإزالة الخيارات
     if (indexOfCurrentSection === -1) {
-      cpyFilters = {
-        ...cpyFilters,
-        [getSectionId]: [getCurrentOption],
-      };
+      cpyFilters = { ...cpyFilters, [getSectionId]: [getCurrentOption] };
     } else {
       const indexOfCurrentOption =
         cpyFilters[getSectionId].indexOf(getCurrentOption);
-
-      if (indexOfCurrentOption === -1)
+  
+      if (indexOfCurrentOption === -1) {
         cpyFilters[getSectionId].push(getCurrentOption);
-      else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      } else {
+        cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      }
     }
-
-    setFilters(cpyFilters);
+  
+    // إدارة "Unisex" إذا تم تحديد "Men" أو "Women"
+    if (cpyFilters.category) {
+      const includesMen = cpyFilters.category.includes("men");
+      const includesWomen = cpyFilters.category.includes("women");
+  
+      if (includesMen || includesWomen) {
+        if (!cpyFilters.category.includes("unisex")) {
+          cpyFilters.category.push("unisex");
+        }
+      } else {
+        cpyFilters.category = cpyFilters.category.filter(
+          (cat) => cat !== "unisex"
+        );
+      }
+    }
+  
+    setFilters({ ...cpyFilters });
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
+  
+
 
   function handleGetProductDetails(getCurrentProductId) {
     console.log(getCurrentProductId);
@@ -91,24 +175,24 @@ function ShoppingListing() {
       const indexOfCurrentItem = getCartItems.findIndex(
         (item) => item.productId === getCurrentProductId
       );
-      if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-        if (getQuantity + 1 > getTotalStock) {
-          toast({
-            title: `Only ${getQuantity} quantity can be added for this item `,
-            variant: "destructive",
-          });
+      // if (indexOfCurrentItem > -1) {
+      //   const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+      //   if (getQuantity + 1 > getTotalStock) {
+      //     toast({
+      //       title: `Only ${getQuantity} quantity can be added for this item `,
+      //       variant: "destructive",
+      //     });
 
-          return;
-        }
-      }
+      //     return;
+      //   }
+      // }
     }
 
     dispatch(
       addToCart({
         userId: user?.id,
         productId: getCurrentProductId,
-        quantity: 1,
+        quantity: 6,
       })
     ).then((data) => {
       if (data?.payload?.success) {

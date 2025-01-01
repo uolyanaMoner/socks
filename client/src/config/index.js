@@ -39,6 +39,72 @@ export const loginFormControls = [
   },
 ];
 
+// export const addProductFormElements = [
+//   {
+//     label: "Title",
+//     name: "title",
+//     componentType: "input",
+//     type: "text",
+//     placeholder: "Enter product title",
+//   },
+//   {
+//     label: "Description",
+//     name: "description",
+//     componentType: "textarea",
+//     placeholder: "Enter product description",
+//   },
+//   {
+//     label: "Category",
+//     name: "category",
+//     componentType: "select",
+//     options: [
+//       { id: "men", label: "Men" },
+//       { id: "women", label: "Women" },
+//       { id: "kids", label: "Kids" },
+//       { id: "unisex", label: "Unisex" }, // إضافة خيار "Unisex"
+//     ],
+//   },
+//   {
+//     label: "Price",
+//     name: "price",
+//     componentType: "input",
+//     type: "number",
+//     placeholder: "Enter product price",
+//   },
+//   {
+//     label: "Sale Price",
+//     name: "salePrice",
+//     componentType: "input",
+//     type: "number",
+//     placeholder: "Enter sale price (optional)",
+//   },
+//   {
+//     label: "Total Stock",
+//     name: "totalStock",
+//     componentType: "input",
+//     type: "number",
+//     placeholder: "Enter total stock",
+//   },
+//   {
+//     label: "Color",
+//     name: "color",
+//     componentType: "input",
+//     type: "text",
+//     placeholder: "Enter product color",
+//   },
+//   {
+//     label: "Brand",
+//     name: "brand",
+//     componentType: "select",
+//     options: [
+//       { id: "nike", label: "Nike" },
+//       { id: "adidas", label: "Adidas" },
+//       { id: "newBalance", label: "New Balance" },
+//     ],
+//   },
+// ];
+
+
 export const addProductFormElements = [
   {
     label: "Title",
@@ -61,6 +127,7 @@ export const addProductFormElements = [
       { id: "men", label: "Men" },
       { id: "women", label: "Women" },
       { id: "kids", label: "Kids" },
+      { id: "unisex", label: "Unisex" },
     ],
   },
   {
@@ -101,6 +168,12 @@ export const addProductFormElements = [
       { id: "newBalance", label: "New Balance" },
     ],
   },
+  {
+    label: "Enter Quantity and Price",
+    name: "quantityPrices",
+    componentType: "quantity-price-input",
+    placeholder: "Enter quantities and their respective prices",
+  },
 ];
 
 export const shoppingViewHeaderMenuItems = [
@@ -140,11 +213,14 @@ export const categoryOptionsMap = {
   men: "Men",
   women: "Women",
   kids: "Kids",
+  unisex: ["Men", "Women"], // جعل Unisex يرتبط بـ Men و Women
+  
 };
 
 export const brandOptionsMap = {
   nike: "Nike",
   adidas: "Adidas",
+  newBalance : 'New Balance'
 };
 
 export const filterOptions = {
@@ -152,6 +228,8 @@ export const filterOptions = {
     { id: "men", label: "Men" },
     { id: "women", label: "Women" },
     { id: "kids", label: "Kids" },
+    { id: "unisex", label: "Unisex" }, // إضافة خيار Unisex
+
   ],
   brand: [
     { id: "nike", label: "Nike" },

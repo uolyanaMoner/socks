@@ -683,6 +683,15 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     autoplaySpeed: 3000,
   };
 
+  const getDiscountedPrice = (quantity) => {
+    // هنا بتختار السعر بناءً على الكمية من quantityPrices
+    const price = productDetails?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    )?.price;
+
+    return price || productDetails?.price; // لو مفيش سعر محدد للكمية هيرجع السعر الأصلي
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 lg:max-h-[780px] max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -720,23 +729,25 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </p>
           </div>
           <div className="flex items-center justify-between">
-            <p
-              className={`text-3xl font-bold text-primary ${
-                productDetails?.salePrice > 0 ? "line-through" : ""
-              }`}
-            >
-              {productDetails?.salePrice === 0 ? (
-                <p> {totalCost} EGP</p>
-              ) : (
-                <p> {productDetails?.price} EGP</p>
-              )}
+          <p
+            className={`text-3xl font-bold text-primary ${
+              productDetails?.salePrice > 0 && quantity === 1
+                ? "line-through"
+                : ""
+            }`}
+          >
+            {productDetails?.salePrice === 0 || quantity > 1 ? (
+              <span>{getDiscountedPrice(quantity)} EGP</span>
+            ) : (
+              <span>{productDetails?.price} EGP</span>
+            )}
+          </p>
+          {productDetails?.salePrice > 0 && quantity === 1 && (
+            <p className="text-2xl font-bold text-muted-foreground">
+              {productDetails?.salePrice} EGP
             </p>
-            {productDetails?.salePrice > 0 ? (
-              <p className="text-2xl font-bold text-muted-foreground">
-                {totalCost} EGP
-              </p>
-            ) : null}
-          </div>
+          )}
+        </div>
           <div>
             <label htmlFor="color" className="block font-bold">
               Choose Color:
@@ -759,20 +770,25 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             )}
           </div>
           <div className="mt-1">
-            <Label>Quantity</Label>
-            <select
-              value={quantity}
-              onChange={handleQuantityChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            >
-              <option value="1">1</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-            </select>
-          </div>
+          <Label>Quantity</Label>
+          <select
+            value={quantity}
+            onChange={handleQuantityChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          >
+            {/* إضافة خيار الكمية 1 كخيار ثابت */}
+            <option value={1}>1</option>
+
+            {productDetails?.quantityPrices?.map((item, index) => (
+              <option key={index} value={item.quantity}>
+                {item.quantity} 
+              </option>
+            ))}
+          </select>
+        </div>
           {/* Text area for additional input */}
           {(selectedColor === "black&white" || selectedColor === "white&black") &&
-            (quantity === 5 || quantity === 10) && (
+            (quantity > 1) && (
               <div className="mt-4">
                 <label htmlFor="additionalInput" className="block font-bold">
                   Additional Details:

@@ -73,16 +73,16 @@
 //       <div
 //         onDragOver={handleDragOver}
 //         onDrop={handleDrop}
-        // className={`${
-        //   isEditMode ? "opacity-60" : ""
-        // } border-2 border-dashed rounded-lg p-4`}
+// className={`${
+//   isEditMode ? "opacity-60" : ""
+// } border-2 border-dashed rounded-lg p-4`}
 //       >
 //         <Input
 //           id="image-upload"
 //           type="file"
 //           className="hidden"
 //           ref={inputRef}
-//           multiple 
+//           multiple
 //           onChange={handleImageFileChange}
 //           disabled={isEditMode}
 //         />
@@ -122,10 +122,104 @@
 
 // export default ProductImageUpload;
 
-import { UploadCloudIcon, XIcon } from "lucide-react";
+// import { UploadCloudIcon, XIcon } from "lucide-react";
+// import { Input } from "../ui/input";
+// import { Label } from "../ui/label";
+// import { useRef, useState } from "react";
+// import { Button } from "../ui/button";
+// import axios from "axios";
+
+// function ProductImageUpload({
+//   uploadedImages,
+//   setUploadedImages,
+//   imageLoadingState,
+//   setImageLoadingState,
+//   isCustomStyling = false,
+// }) {
+//   const inputRef = useRef(null);
+
+//   async function handleFileChange(event) {
+//     const selectedFiles = Array.from(event.target.files);
+//     if (selectedFiles.length) {
+//       setImageLoadingState(true);
+
+//       try {
+//         const uploadPromises = selectedFiles.map((file) => {
+//           const formData = new FormData();
+//           formData.append("file", file);
+//           formData.append("upload_preset", "ml_default");
+
+//           return axios.post(
+//             "https://api.cloudinary.com/v1_1/dud2xcn2l/image/upload",
+//             formData
+//           ).then((response) => response.data.secure_url);
+//         });
+
+//         const uploadedUrls = await Promise.all(uploadPromises);
+//         setUploadedImages((prevImages) => [...prevImages, ...uploadedUrls]);
+//       } catch (error) {
+//         console.error("Error uploading images:", error);
+//       } finally {
+//         setImageLoadingState(false);
+//       }
+//     }
+//   }
+
+//   function handleRemoveImage(url) {
+//     setUploadedImages((prev) => prev.filter((image) => image !== url));
+//   }
+
+//   return (
+//     <div className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
+//       <Label className="text-lg font-semibold mb-2 block">Upload Images</Label>
+//       <div className={`border-2 border-dashed rounded-lg p-4`}>
+//         <Input
+//           id="image-upload"
+//           type="file"
+//           className="hidden"
+//           ref={inputRef}
+//           onChange={handleFileChange}
+//           multiple
+//         />
+//         <Label
+//           htmlFor="image-upload"
+//           className="flex flex-col items-center justify-center h-32 cursor-pointer"
+//         >
+//           <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
+//           <span>Click to upload images</span>
+//         </Label>
+//         {imageLoadingState && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+//         <div className="grid grid-cols-3 gap-2 mt-4">
+//           {uploadedImages?.map((url, index) => (
+//             <div key={index} className="relative">
+//               <img src={url} alt="Uploaded" className="h-20 w-20 object-cover rounded-lg" />
+//               <Button
+//                 variant="ghost"
+//                 size="icon"
+//                 className="absolute top-0 right-0 text-muted-foreground hover:text-foreground"
+//                 onClick={() => handleRemoveImage(url)}
+//               >
+//                 <XIcon className="w-4 h-4" />
+//               </Button>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default ProductImageUpload;
+
+import {
+  UploadCloudIcon,
+  XIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+} from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
 
@@ -149,10 +243,12 @@ function ProductImageUpload({
           formData.append("file", file);
           formData.append("upload_preset", "ml_default");
 
-          return axios.post(
-            "https://api.cloudinary.com/v1_1/dud2xcn2l/image/upload",
-            formData
-          ).then((response) => response.data.secure_url);
+          return axios
+            .post(
+              "https://api.cloudinary.com/v1_1/dud2xcn2l/image/upload",
+              formData
+            )
+            .then((response) => response.data.secure_url);
         });
 
         const uploadedUrls = await Promise.all(uploadPromises);
@@ -167,6 +263,19 @@ function ProductImageUpload({
 
   function handleRemoveImage(url) {
     setUploadedImages((prev) => prev.filter((image) => image !== url));
+  }
+
+  function moveImage(index, direction) {
+    const newImages = [...uploadedImages];
+    const targetIndex = index + direction;
+
+    if (targetIndex >= 0 && targetIndex < newImages.length) {
+      [newImages[index], newImages[targetIndex]] = [
+        newImages[targetIndex],
+        newImages[index],
+      ];
+      setUploadedImages(newImages);
+    }
   }
 
   return (
@@ -188,11 +297,17 @@ function ProductImageUpload({
           <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
           <span>Click to upload images</span>
         </Label>
-        {imageLoadingState && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+        {imageLoadingState && (
+          <p className="text-sm text-gray-500 mt-2">Uploading...</p>
+        )}
         <div className="grid grid-cols-3 gap-2 mt-4">
           {uploadedImages?.map((url, index) => (
             <div key={index} className="relative">
-              <img src={url} alt="Uploaded" className="h-20 w-20 object-cover rounded-lg" />
+              <img
+                src={url}
+                alt="Uploaded"
+                className="h-20 w-20 object-cover rounded-lg"
+              />
               <Button
                 variant="ghost"
                 size="icon"
@@ -201,6 +316,24 @@ function ProductImageUpload({
               >
                 <XIcon className="w-4 h-4" />
               </Button>
+              <div className="absolute bottom-0 left-0 flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => moveImage(index, -1)} // Move up
+                  disabled={index === 0} // Disable if it's the first image
+                >
+                  <ArrowUpIcon className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => moveImage(index, 1)} // Move down
+                  disabled={index === uploadedImages.length - 1} // Disable if it's the last image
+                >
+                  <ArrowDownIcon className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

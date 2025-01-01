@@ -58,7 +58,7 @@ const addProduct = async (req, res) => {
       totalStock,
       averageReview,
       color,
-      
+      quantityPrices,
     } = req.body;
 
     console.log(averageReview, "averageReview");
@@ -74,6 +74,7 @@ const addProduct = async (req, res) => {
       totalStock,
       averageReview,
       color,
+      quantityPrices,
     });
 
     await newlyCreatedProduct.save();
@@ -123,6 +124,7 @@ const editProduct = async (req, res) => {
       totalStock,
       averageReview,
       color,
+      quantityPrices,
     } = req.body;
 
     let findProduct = await Product.findById(id);
@@ -143,6 +145,7 @@ const editProduct = async (req, res) => {
     findProduct.image = image || findProduct.image;
     findProduct.color = color || findProduct.color;
     findProduct.averageReview = averageReview || findProduct.averageReview;
+    findProduct.quantityPrices = quantityPrices || findProduct.quantityPrices;
 
     await findProduct.save();
     res.status(200).json({
