@@ -3,13 +3,6 @@
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 // import { Textarea } from "../ui/textarea";
 // import { Button } from "../ui/button";
-
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Textarea } from "../ui/textarea";
-
 // function CommonForm({
 //   formControls,
 //   formData,
@@ -315,6 +308,11 @@ import { Textarea } from "../ui/textarea";
 
 // export default CommonForm;
 
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 function CommonForm({
   formControls,
@@ -327,9 +325,8 @@ function CommonForm({
   // Function to add a new quantity-price pair
   const handleAddQuantityPrice = () => {
     const quantity = formData.quantity || ""; // Default to empty string if no value
-    const price = formData.price || ""; // Default to empty string if no value
+    const price = formData.quantityPrice || ""; // Default to empty string if no value
 
-    // Add the new pair
     const updatedQuantityPrices = [
       ...formData.quantityPrices,
       { quantity: quantity.trim(), price: price.trim() },
@@ -339,7 +336,7 @@ function CommonForm({
       ...formData,
       quantityPrices: updatedQuantityPrices,
       quantity: "", // Reset quantity input
-      price: "", // Reset price input
+      quantityPrice: "", // Reset quantity price input
     });
   };
 
@@ -453,14 +450,17 @@ function CommonForm({
                   />
                   <Input
                     type="number"
-                    name="price"
-                    placeholder="Enter price (optional)"
-                    value={formData.price || ""}
+                    name="quantityPrice"
+                    placeholder="Enter price for quantity (optional)"
+                    value={formData.quantityPrice || ""}
                     onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
+                      setFormData({ ...formData, quantityPrice: e.target.value })
                     }
                   />
-                  <Button type="button" onClick={handleAddQuantityPrice}>
+                  <Button
+                    type="button"
+                    onClick={handleAddQuantityPrice}
+                  >
                     Add
                   </Button>
                 </div>
@@ -497,7 +497,8 @@ function CommonForm({
           </div>
         ))}
       </div>
-      <Button disabled={isBtnDisabled} type="submit" className="mt-2 w-full">
+      {/* هنا تم إزالة isBtnDisabled */}
+      <Button type="submit" className="mt-2 w-full">
         {buttonText || "Submit"}
       </Button>
     </form>
