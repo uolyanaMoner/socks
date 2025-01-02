@@ -796,7 +796,7 @@ function MobileView() {
       if (data?.payload?.success) {
         dispatch(fetchCartItems(userId));
         toast({
-          title: "تم إضافة المنتج إلى السلة",
+          title: "Product added to card",
         });
       }
     });
@@ -918,11 +918,11 @@ function MobileView() {
             className="w-full p-2 border border-gray-300 rounded"
           >
             {/* إضافة خيار الكمية 1 كخيار ثابت */}
-            <option value={1}>1 قطعة</option>
+            <option value={1}>1</option>
 
             {productDetails?.quantityPrices?.map((item, index) => (
               <option key={index} value={item.quantity}>
-                {item.quantity} {item.quantity === 1 ? "قطعة" : "قطع"}
+                {item.quantity} 
               </option>
             ))}
           </select>
@@ -932,7 +932,7 @@ function MobileView() {
           (quantity === 5 || quantity === 10) && (
             <div className="mt-4">
               <label htmlFor="additionalInput" className="block font-bold">
-                تفاصيل إضافية:
+                Additional Details
               </label>
               <textarea
                 id="additionalInput"
@@ -957,12 +957,12 @@ function MobileView() {
               handleAddToCart(productDetails?._id, productDetails?.totalStock)
             }
           >
-            أضف إلى السلة
+            Add to card
           </Button>
         </div>
         <Separator />
         <div className="max-h-[300px] overflow-auto">
-          <h2 className="text-xl font-bold mb-4">التقييمات</h2>
+          <h2 className="text-xl font-bold mb-4">Reviews</h2>
           <div className="grid gap-6">
             {reviews && reviews.length > 0 ? (
               reviews.map((reviewItem) => (
@@ -983,7 +983,7 @@ function MobileView() {
                 </div>
               ))
             ) : (
-              <h1>لا توجد تقييمات</h1>
+              <h1>No reviews</h1>
             )}
           </div>
           <div className="mt-10 p-2 flex-col flex gap-2">
@@ -993,7 +993,7 @@ function MobileView() {
                 handleRatingChange={handleRatingChange}
               />
             </div>
-            <Button onClick={handleAddReview}>إرسال التقييم</Button>
+            <Button onClick={handleAddReview}>Submit</Button>
           </div>
         </div>
       </div>
