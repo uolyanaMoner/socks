@@ -196,7 +196,7 @@ function App() {
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={<ShoppingAccount />} />
-          <Route path="mobile-view" element={<MobileView />} />
+          <Route path="mobile-view/:productId" element={<MobileView />} />
           <Route path="paymob-return" element={<PaymobReturnPage />} />
           <Route path="payment-success" element={<PaymentSuccessPage />} />
           <Route path="search" element={<SearchProducts />} />
