@@ -308,11 +308,14 @@
 
 // export default CommonForm;
 
+
+
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 function CommonForm({
   formControls,
@@ -322,14 +325,21 @@ function CommonForm({
   buttonText,
   isBtnDisabled,
 }) {
+  const { toast } = useToast();
+
   // Function to add a new quantity-price pair
   const handleAddQuantityPrice = () => {
-    const quantity = formData.quantity || ""; // Default to empty string if no value
-    const price = formData.quantityPrice || ""; // Default to empty string if no value
+    const quantity = formData.quantity?.trim();
+    const price = formData.quantityPrice?.trim();
+
+    if (!quantity || !price) {
+      toast({ title: "Please enter both quantity and price." });
+      return;
+    }
 
     const updatedQuantityPrices = [
       ...formData.quantityPrices,
-      { quantity: quantity.trim(), price: price.trim() },
+      { quantity, price },
     ];
 
     setFormData({
@@ -497,8 +507,7 @@ function CommonForm({
           </div>
         ))}
       </div>
-      {/* هنا تم إزالة isBtnDisabled */}
-      <Button type="submit" className="mt-2 w-full">
+      <Button type="submit" className="mt-2 w-full" disabled={isBtnDisabled}>
         {buttonText || "Submit"}
       </Button>
     </form>
