@@ -542,6 +542,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [selectedColor, setSelectedColor] = useState(""); // تعريف المتغير هنا
   const [additionalDetails, setAdditionalDetails] = useState(""); // حالة لتخزين نص المستخدم
   const { productList } = useSelector((state) => state.shopProducts);
+  const [isExpanded, setIsExpanded] = useState(false); // حالة لعرض أو إخفاء الوصف الكامل
 
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
@@ -743,6 +744,19 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     return price || productDetails?.price; // لو مفيش سعر محدد للكمية هيرجع السعر الأصلي
   };
 
+
+  const getDescription = () => {
+    if (!productDetails?.description) return "";
+    if (isExpanded) {
+      return productDetails?.description; // الوصف بالكامل عند التوسيع
+    } else {
+      // سيتم إرجاع الوصف فقط لأهم 3 أسطر
+      const descriptionLines = productDetails?.description?.split("\n");
+      return descriptionLines?.slice(0, 3).join("\n"); // 3 أسطر فقط
+    }
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 lg:max-h-[780px] max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -775,9 +789,35 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         <div className="">
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
-            <p className="text-muted-foreground text-2xl mb-3 mt-4">
-              {productDetails?.description}
-            </p>
+            <p
+        className="text-muted-foreground text-2xl mb-3 mt-4"
+        style={{
+          maxHeight: isExpanded ? "none" : "4.5em", // عرض الوصف بالكامل عند التوسيع
+          overflow: "hidden", // إخفاء ما يزيد عن الأسطر المحددة
+          display: "-webkit-box", // استخدام box لعرض الأسطر بشكل مرتب
+          WebkitBoxOrient: "vertical", // لضمان العرض العمودي
+          WebkitLineClamp: isExpanded ? "none" : 3, // 3 أسطر فقط عند التقلص
+        }}
+      >
+        {getDescription()}
+      </p>
+
+      {/* زر لعرض الوصف بالكامل أو تقليصه */}
+      {productDetails?.description?.split("\n").length > 3 && (
+        <Button
+          onClick={() => setIsExpanded(!isExpanded)}
+          variant="link"
+          style={{
+            padding: 0,
+            color: "blue",
+            textDecoration: "underline",
+            cursor: "pointer",
+          }}
+        >
+          {isExpanded ? "Show Less" : "Show More"}
+        </Button>
+      )}
+            
           </div>
           <div className="flex items-center justify-between">
             <p
