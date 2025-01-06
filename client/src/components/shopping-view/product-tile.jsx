@@ -102,16 +102,18 @@ function ShoppingProductTile({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleProductClick = (productId) => {
-    if (isMobile) {
-      // التوجيه إلى صفحة MobileView عندما يكون العرض على موبايل
-      navigate("/shop/mobile-view", { state: { productDetails: product } });
-    } else {
-      // عرض تفاصيل المنتج على الأجهزة غير الموبايل
-      handleGetProductDetails(productId);
-    }
-  };
 
+const handleProductClick = (productId) => {
+  if (isMobile) {
+    // التوجيه إلى صفحة MobileView مع تمرير productId عبر الرابط
+    navigate(`/shop/mobile-view/${productId}`);
+  } else {
+    // عرض تفاصيل المنتج على الأجهزة غير الموبايل
+    handleGetProductDetails(productId);
+  }
+};
+
+  
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div onClick={() => handleProductClick(product?._id)}>

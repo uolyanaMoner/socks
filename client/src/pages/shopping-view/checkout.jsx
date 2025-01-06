@@ -20,6 +20,7 @@ function ShoppingCheckout() {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState(""); // حفظ طريقة الدفع المختارة
   const userId = user?.id || localStorage.getItem("guestUserId");
+  const { productList } = useSelector((state) => state.shopProducts);
 
   // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
   if (!userId) {
@@ -47,63 +48,133 @@ function ShoppingCheckout() {
     setShippingCost(shippingCosts[selectedProvince]);
   };
 
-  const totalCartAmount =
-    cartItems && cartItems.items && cartItems.items.length > 0
-      ? cartItems.items.reduce((sum, currentItem) => {
-          const itemPrice =
-            currentItem?.salePrice > 0
-              ? currentItem?.salePrice
-              : currentItem?.price;
+// دالة للحصول على السعر المخصص بناءً على الكمية
+// const getDiscountedPrice = (productId, quantity) => {
+//   const product = productList?.find((item) => item._id === productId);
+//   const price = product?.quantityPrices?.find(
+//     (item) => item.quantity === quantity
+//   )?.price;
+//   return price || null;
+// };
 
-          // حساب إجمالي الكمية في السلة
-          const totalQuantityInCart = cartItems.items.reduce(
-            (total, item) => total + (item?.quantity || 0),
-            0
-          );
+// // دالة لحساب السعر العادي بناءً على الكمية
+// const getPriceBasedOnQuantity = (productId, quantity) => {
+//   const product = productList?.find((item) => item._id === productId);
+//   const price = product?.salePrice > 0 ? product.salePrice : product?.price;
+//   return price;
+// };
 
-          // إذا كانت الكمية 6 من نفس المنتج أو إجمالي الكمية في السلة 6 أو أكثر
-          if (currentItem?.quantity === 6 || totalQuantityInCart === 6) {
-            return sum + itemPrice * currentItem.quantity * 0.9; // خصم 10%
-          }
+// // حساب إجمالي المبلغ في التوتال
+// const totalCartAmount =
+//   cartItems && cartItems.items && cartItems.items.length > 0
+//     ? cartItems.items.reduce((sum, currentItem) => {
+//         // الحصول على السعر المخصص للكمية (إذا كان موجودًا)
+//         const discountedPrice = getDiscountedPrice(
+//           currentItem?.productId,
+//           currentItem?.quantity
+//         );
 
-          // إذا كانت الكمية 12 من نفس المنتج أو إجمالي الكمية في السلة 12 أو أكثرz
-          if (currentItem?.quantity === 12 || totalQuantityInCart === 12) {
-            return sum + itemPrice * currentItem.quantity * 0.8; // خصم 20%
-          }
+//         // إذا كان هناك سعر مخصص للكمية، نستخدمه كما هو (لا نضربه في الكمية)
+//         const itemPrice = discountedPrice
+//           ? discountedPrice // نستخدم السعر المخصص للكمية إذا وجد
+//           : getPriceBasedOnQuantity(currentItem?.productId, currentItem?.quantity); // أو نستخدم السعر العادي إذا لم يكن هناك سعر مخصص للكمية
 
-          // بدون خصم إذا لم يتحقق أي شرط
-          return sum + itemPrice * currentItem.quantity;
-        }, 0) + shippingCost // أضف مصاريف الشحن إلى الإجمالي
-      : shippingCost; // إذا كانت العربة فارغة، الإجمالي هو الشحن فقط
+//         // إذا كان هناك سعر مخصص للكمية، نضيفه مباشرة
+//         if (discountedPrice) {
+//           return sum + itemPrice;
+//         }
 
-  // حساب قيمة الخصم
-  const discount =
-    cartItems && cartItems.items && cartItems.items.length > 0
-      ? cartItems.items.reduce((sum, currentItem) => {
-          const itemPrice =
-            currentItem?.salePrice > 0
-              ? currentItem?.salePrice
-              : currentItem?.price;
+//         // إذا لم يكن هناك سعر مخصص للكمية، نضرب السعر في الكمية
+//         return sum + itemPrice * currentItem.quantity;
+//       }, 0) + shippingCost // إضافة مصاريف الشحن إلى الإجمالي
+//     : shippingCost; // إذا كانت العربة فارغة، الإجمالي هو الشحن فقط
 
-          // حساب إجمالي الكمية في السلة
-          const totalQuantityInCart = cartItems.items.reduce(
-            (total, item) => total + (item?.quantity || 0),
-            0
-          );
+// دالة للحصول على السعر المخصص بناءً على الكمية
+const getDiscountedPrice = (productId, quantity) => {
+  const product = productList?.find((item) => item._id === productId);
+  const price = product?.quantityPrices?.find(
+    (item) => item.quantity === quantity
+  )?.price;
+  return price || null;
+};
 
-          // إذا كانت الكمية 6 من نفس المنتج أو إجمالي الكمية في السلة 6 أو أكثر
-          if (currentItem?.quantity === 6 || totalQuantityInCart === 6) {
-            return sum + itemPrice * currentItem.quantity * 0.1; // خصم 10%
-          }
+// دالة لحساب السعر العادي بناءً على الكمية
+const getPriceBasedOnQuantity = (productId, quantity) => {
+  const product = productList?.find((item) => item._id === productId);
+  const price = product?.salePrice > 0 ? product.salePrice : product?.price;
+  return price;
+};
 
-          // إذا كانت الكمية 12 من نفس المنتج أو إجمالي الكمية في السلة 12 أو أكثر
-          if (currentItem?.quantity === 12 || totalQuantityInCart === 12) {
-            return sum + itemPrice * currentItem.quantity * 0.2; // خصم 20%
-          }
+// حساب إجمالي المبلغ في التوتال (دون الشحن والخصم)
+const totalCartAmountBeforeDiscount =
+  cartItems && cartItems.items && cartItems.items.length > 0
+    ? cartItems.items.reduce((sum, currentItem) => {
+        // الحصول على السعر المخصص للكمية (إذا كان موجودًا)
+        const discountedPrice = getDiscountedPrice(
+          currentItem?.productId,
+          currentItem?.quantity
+        );
 
-          return sum; // لا خصم إذا لم يتحقق أي شرط
-        }, 0)
-      : 0; // إذا كانت العربة فارغة، لا يوجد خصم
+        // إذا كان هناك سعر مخصص للكمية، نستخدمه كما هو (لا نضربه في الكمية)
+        const itemPrice = discountedPrice
+          ? discountedPrice // نستخدم السعر المخصص للكمية إذا وجد
+          : getPriceBasedOnQuantity(currentItem?.productId, currentItem?.quantity); // أو نستخدم السعر العادي إذا لم يكن هناك سعر مخصص للكمية
+
+        // إذا كان هناك سعر مخصص للكمية، نضيفه مباشرة
+        if (discountedPrice) {
+          return sum + itemPrice;
+        }
+
+        // إذا لم يكن هناك سعر مخصص للكمية، نضرب السعر في الكمية
+        return sum + itemPrice * currentItem.quantity;
+      }, 0)
+    : 0; // إذا كانت العربة فارغة، الإجمالي يكون 0
+
+// حساب الخصم بناءً على إجمالي الكمية في السلة
+const totalQuantityInCart = cartItems.items.reduce(
+  (total, item) => total + (item?.quantity || 0),
+  0
+);
+
+// تحديد قيمة الخصم بناءً على إجمالي الكمية في السلة
+let discount = 0;
+if (totalQuantityInCart >= 12) {
+  discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة أو أكثر
+} else if (totalQuantityInCart >= 6) {
+  discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع أو أكثر
+}
+
+// حساب المجموع النهائي بعد الخصم وإضافة الشحن
+const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
+
+ 
+  // const discount =
+  //   cartItems && cartItems.items && cartItems.items.length > 0
+  //     ? cartItems.items.reduce((sum, currentItem) => {
+  //         const itemPrice =
+  //           currentItem?.salePrice > 0
+  //             ? currentItem?.salePrice
+  //             : currentItem?.price;
+
+  //         // حساب إجمالي الكمية في السلة
+  //         const totalQuantityInCart = cartItems.items.reduce(
+  //           (total, item) => total + (item?.quantity || 0),
+  //           0
+  //         );
+
+  //         // إذا كانت الكمية 6 من نفس المنتج أو إجمالي الكمية في السلة 6 أو أكثر
+  //         if (currentItem?.quantity === 6 || totalQuantityInCart === 6) {
+  //           return sum + itemPrice * currentItem.quantity * 0.1; // خصم 10%
+  //         }
+
+  //         // إذا كانت الكمية 12 من نفس المنتج أو إجمالي الكمية في السلة 12 أو أكثر
+  //         if (currentItem?.quantity === 12 || totalQuantityInCart === 12) {
+  //           return sum + itemPrice * currentItem.quantity * 0.2; // خصم 20%
+  //         }
+
+  //         return sum; // لا خصم إذا لم يتحقق أي شرط
+  //       }, 0)
+  //     : 0; // إذا كانت العربة فارغة، لا يوجد خصم
 
 
       

@@ -309,7 +309,6 @@
 // export default AdminProducts;
 
 
-
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import AdminProductTile from "@/components/admin-view/product-tile";
 import CommonForm from "@/components/common/form";
@@ -359,7 +358,7 @@ function AdminProducts() {
 
     const productData = {
       ...formData,
-      image: uploadedImages.join(","),
+      image: uploadedImages.join(","), // دمج الصور في سطر واحد
     };
 
     if (currentEditedId) {
@@ -399,7 +398,7 @@ function AdminProducts() {
     return Object.keys(formData)
       .filter((currentKey) => currentKey !== "averageReview")
       .map((key) => formData[key] !== "")
-      .every((item) => item);
+      .every((item) => item); // تأكد من أن كل القيم مملوءة
   }
 
   return (
@@ -449,7 +448,6 @@ function AdminProducts() {
               setFormData={setFormData}
               buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
-              isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>
