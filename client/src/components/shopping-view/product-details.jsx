@@ -12,7 +12,6 @@
 // import StarRatingComponent from "../common/star-rating";
 // import { useEffect, useState } from "react";
 // import { addReview, getReviews } from "@/store/shop/review-slice";
-
 // function ProductDetailsDialog({ open, setOpen, productDetails,  }) {
 //   const [reviewMsg, setReviewMsg] = useState("");
 //   const [rating, setRating] = useState(0);
@@ -542,6 +541,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [availableColors, setAvailableColors] = useState([]);
   const [selectedColor, setSelectedColor] = useState(""); // تعريف المتغير هنا
   const [additionalDetails, setAdditionalDetails] = useState(""); // حالة لتخزين نص المستخدم
+  const { productList } = useSelector((state) => state.shopProducts);
 
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
@@ -579,50 +579,101 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     }
   }, [productDetails?.color]);
 
-  function handleAddToCart(getCurrentProductId, getTotalStock) {
-    // if (quantity > getTotalStock) {
-    //   toast({
-    //     title: `Only ${getTotalStock} items available in stock`,
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
+  // function handleAddToCart(getCurrentProductId, getTotalStock) {
+  //   // if (quantity > getTotalStock) {
+  //   //   toast({
+  //   //     title: `Only ${getTotalStock} items available in stock`,
+  //   //     variant: "destructive",
+  //   //   });
+  //   //   return;
+  //   // }
 
-    // تحقق من اللون والكمية لإرسال التفاصيل
+  //   // تحقق من اللون والكمية لإرسال التفاصيل
+  //   const userId = user?.id || localStorage.getItem("guestUserId");
+
+  //   // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
+  //   if (!userId) {
+  //     const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
+  //     localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
+  //   }
+
+  //   const shouldSubmitDetails =
+  //     (selectedColor === "black&white" || selectedColor === "white&black") &&
+  //     (quantity === 5 || quantity === 10);
+  //   if (userId) {
+  //     dispatch(
+  //       addToCart({
+  //         userId,
+  //         productId: getCurrentProductId,
+  //         quantity,
+  //         color: selectedColor || "",
+  //         additionalDetails: shouldSubmitDetails ? additionalDetails : "",
+  //       })
+  //     ).then((data) => {
+  //       if (data?.payload?.success) {
+  //         dispatch(fetchCartItems(userId)); // تمرير userId بدلاً من user?.id
+  //         toast({
+  //           title: "Product is added to cart",
+  //         });
+  //       }
+  //     });
+  //   } else {
+  //     toast({
+  //       title: "Unable to get User ID",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }
+
+    const shareProduct = async () => {
+    const productUrl = window.location.href; // الحصول على رابط المنتج الحالي
+
+    // تحقق من دعم المتصفح لميزة الشير
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: productDetails?.title,
+          text: productDetails?.description,
+          url: productUrl, // رابط المنتج
+        });
+        console.log("Product shared successfully!");
+      } catch (error) {
+        console.log("Error sharing product:", error);
+      }
+    } else {
+      // إذا كان المتصفح لا يدعم الـ share API
+      alert("Share feature is not supported in your browser.");
+    }
+  };
+
+  function handleAddToCart(getCurrentProductId, getTotalStock) {
     const userId = user?.id || localStorage.getItem("guestUserId");
 
-    // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
     if (!userId) {
-      const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
-      localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
+      const generatedUserId = `guest-${Date.now()}`;
+      localStorage.setItem("guestUserId", generatedUserId);
     }
 
-    const shouldSubmitDetails =
-      (selectedColor === "black&white" || selectedColor === "white&black") &&
-      (quantity === 5 || quantity === 10);
-    if (userId) {
-      dispatch(
-        addToCart({
-          userId,
-          productId: getCurrentProductId,
-          quantity,
-          color: selectedColor || "",
-          additionalDetails: shouldSubmitDetails ? additionalDetails : "",
-        })
-      ).then((data) => {
-        if (data?.payload?.success) {
-          dispatch(fetchCartItems(userId)); // تمرير userId بدلاً من user?.id
-          toast({
-            title: "Product is added to cart",
-          });
-        }
-      });
-    } else {
-      toast({
-        title: "Unable to get User ID",
-        variant: "destructive",
-      });
-    }
+    let selectedPrice = getDiscountedPrice(quantity); // Use the price based on quantity selection
+
+    const cartItem = {
+      userId,
+      productId: getCurrentProductId,
+      quantity,
+      price: selectedPrice, // Store the selected price for the quantity
+      color: selectedColor || "defaultColor",
+      additionalDetails: additionalDetails,
+    };
+    console.log("cartItem", cartItem);
+    // Dispatch action to add the product to cart
+    dispatch(addToCart(cartItem)).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(userId));
+        toast({
+          title: "Product is added to cart",
+        });
+      }
+    });
   }
 
   function handleDialogClose() {
@@ -729,25 +780,25 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </p>
           </div>
           <div className="flex items-center justify-between">
-          <p
-            className={`text-3xl font-bold text-primary ${
-              productDetails?.salePrice > 0 && quantity === 1
-                ? "line-through"
-                : ""
-            }`}
-          >
-            {productDetails?.salePrice === 0 || quantity > 1 ? (
-              <span>{getDiscountedPrice(quantity)} EGP</span>
-            ) : (
-              <span>{productDetails?.price} EGP</span>
-            )}
-          </p>
-          {productDetails?.salePrice > 0 && quantity === 1 && (
-            <p className="text-2xl font-bold text-muted-foreground">
-              {productDetails?.salePrice} EGP
+            <p
+              className={`text-3xl font-bold text-primary ${
+                productDetails?.salePrice > 0 && quantity === 1
+                  ? "line-through"
+                  : ""
+              }`}
+            >
+              {productDetails?.salePrice === 0 || quantity > 1 ? (
+                <span>{getDiscountedPrice(quantity)} EGP</span>
+              ) : (
+                <span>{productDetails?.price} EGP</span>
+              )}
             </p>
-          )}
-        </div>
+            {productDetails?.salePrice > 0 && quantity === 1 && (
+              <p className="text-2xl font-bold text-muted-foreground">
+                {productDetails?.salePrice} EGP
+              </p>
+            )}
+          </div>
           <div>
             <label htmlFor="color" className="block font-bold">
               Choose Color:
@@ -770,25 +821,26 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             )}
           </div>
           <div className="mt-1">
-          <Label>Quantity</Label>
-          <select
-            value={quantity}
-            onChange={handleQuantityChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          >
-            {/* إضافة خيار الكمية 1 كخيار ثابت */}
-            <option value={1}>1</option>
+            <Label>Quantity</Label>
+            <select
+              value={quantity}
+              onChange={handleQuantityChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            >
+              {/* إضافة خيار الكمية 1 كخيار ثابت */}
+              <option value={1}>1</option>
 
-            {productDetails?.quantityPrices?.map((item, index) => (
-              <option key={index} value={item.quantity}>
-                {item.quantity} 
-              </option>
-            ))}
-          </select>
-        </div>
+              {productDetails?.quantityPrices?.map((item, index) => (
+                <option key={index} value={item.quantity}>
+                  {item.quantity}
+                </option>
+              ))}
+            </select>
+          </div>
           {/* Text area for additional input */}
-          {(selectedColor === "black&white" || selectedColor === "white&black") &&
-            (quantity > 1) && (
+          {(selectedColor === "black&white" ||
+            selectedColor === "white&black") &&
+            quantity > 1 && (
               <div className="mt-4">
                 <label htmlFor="additionalInput" className="block font-bold">
                   Additional Details:
@@ -873,3 +925,157 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 }
 
 export default ProductDetailsDialog;
+
+// function ProductDetailsDialog({ open, setOpen, productDetails }) {
+//   const [quantity, setQuantity] = useState(1);
+//   const [availableColors, setAvailableColors] = useState([]);
+//   const [selectedColor, setSelectedColor] = useState(""); // Define the color state
+//   const [additionalDetails, setAdditionalDetails] = useState(""); // State for additional text
+//   const dispatch = useDispatch();
+//   const { user } = useSelector((state) => state.auth);
+//   const { toast } = useToast();
+
+//   // Function to determine the discounted price based on the quantity
+//   const getDiscountedPrice = (quantity) => {
+//     const price = productDetails?.quantityPrices?.find(
+//       (item) => item.quantity === quantity
+//     )?.price;
+//     return price || productDetails?.price; // Return the price for the selected quantity
+//   };
+
+//   useEffect(() => {
+//     const colors = Array.isArray(productDetails?.color)
+//       ? productDetails?.color
+//       : productDetails?.color
+//       ? productDetails?.color.split(" and ")
+//       : [];
+//     setAvailableColors(colors);
+//     if (colors.length) {
+//       setSelectedColor(colors[0]);
+//     }
+//   }, [productDetails?.color]);
+
+//   const handleQuantityChange = (event) => {
+//     setQuantity(parseInt(event.target.value));
+//   };
+
+//   const handleColorChange = (event) => {
+//     const newColor = event.target.value;
+//     setSelectedColor(newColor);
+//   };
+
+//   const handleAdditionalDetailsChange = (event) => {
+//     setAdditionalDetails(event.target.value); // Update the additional details text
+//   };
+
+//   function handleAddToCart(getCurrentProductId, getTotalStock) {
+//     const userId = user?.id || localStorage.getItem("guestUserId");
+
+//     if (!userId) {
+//       const generatedUserId = `guest-${Date.now()}`;
+//       localStorage.setItem("guestUserId", generatedUserId);
+//     }
+
+//     let selectedPrice = getDiscountedPrice(quantity); // Use the price based on quantity selection
+
+//     const cartItem = {
+//       userId,
+//       productId: getCurrentProductId,
+//       quantity,
+//       price: selectedPrice, // Store the selected price for the quantity
+//       color: selectedColor || 'defaultColor',
+//       additionalDetails: additionalDetails,
+//     };
+// console.log('cartItem', cartItem)
+//     // Dispatch action to add the product to cart
+//     dispatch(addToCart(cartItem)).then((data) => {
+//       if (data?.payload?.success) {
+//         dispatch(fetchCartItems(userId));
+//         toast({
+//           title: "Product is added to cart",
+//         });
+//       }
+//     });
+//   }
+
+//   return (
+//     <Dialog open={open} onOpenChange={() => setOpen(false)}>
+//       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 lg:max-h-[780px] max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+//         <div className="relative overflow-hidden rounded-lg">
+//           {/* Product Image */}
+//           <img
+//             src={productDetails?.image}
+//             alt={productDetails?.title}
+//             className="aspect-square w-full h-[400px] object-cover rounded-lg"
+//           />
+//         </div>
+//         <div className="">
+//           {/* Product Details */}
+//           <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
+//           <p className="text-muted-foreground text-2xl mb-3 mt-4">
+//             {productDetails?.description}
+//           </p>
+
+//           <div className="flex items-center justify-between">
+//             <p className="text-3xl font-bold text-primary">
+//               {getDiscountedPrice(quantity)} EGP
+//             </p>
+//           </div>
+
+//           {/* Color Selection */}
+//           <div>
+//             <label htmlFor="color" className="block font-bold">
+//               Choose Color:
+//             </label>
+//             {availableColors.length > 0 ? (
+//               <select
+//                 id="color"
+//                 value={selectedColor}
+//                 onChange={handleColorChange}
+//                 className="border rounded p-2 w-full"
+//               >
+//                 {availableColors.map((color, index) => (
+//                   <option key={index} value={color}>
+//                     {color.charAt(0).toUpperCase() + color.slice(1)}
+//                   </option>
+//                 ))}
+//               </select>
+//             ) : (
+//               <p className="text-red-500">No colors available</p>
+//             )}
+//           </div>
+
+//           {/* Quantity Selection */}
+//           <div className="mt-1">
+//             <Label>Quantity</Label>
+//             <select
+//               value={quantity}
+//               onChange={handleQuantityChange}
+//               className="w-full p-2 border border-gray-300 rounded"
+//             >
+//               <option value={1}>1</option>
+//               {productDetails?.quantityPrices?.map((item, index) => (
+//                 <option key={index} value={item.quantity}>
+//                   {item.quantity}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+
+//           {/* Add to Cart Button */}
+//           <div className="flex items-center justify-between mt-4">
+//             <Button
+//               onClick={() =>
+//                 handleAddToCart(productDetails?._id, productDetails?.totalStock)
+//               }
+//             >
+//               Add to Cart
+//             </Button>
+//           </div>
+//         </div>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// }
+
+// export default ProductDetailsDialog;
