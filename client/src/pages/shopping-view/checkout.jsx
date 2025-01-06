@@ -89,6 +89,7 @@ function ShoppingCheckout() {
 //       }, 0) + shippingCost // إضافة مصاريف الشحن إلى الإجمالي
 //     : shippingCost; // إذا كانت العربة فارغة، الإجمالي هو الشحن فقط
 
+
 // دالة للحصول على السعر المخصص بناءً على الكمية
 const getDiscountedPrice = (productId, quantity) => {
   const product = productList?.find((item) => item._id === productId);
@@ -105,7 +106,7 @@ const getPriceBasedOnQuantity = (productId, quantity) => {
   return price;
 };
 
-// حساب إجمالي المبلغ في التوتال (دون الشحن والخصم)
+// حساب إجمالي المبلغ في التوتال (دون الخصم)
 const totalCartAmountBeforeDiscount =
   cartItems && cartItems.items && cartItems.items.length > 0
     ? cartItems.items.reduce((sum, currentItem) => {
@@ -127,8 +128,8 @@ const totalCartAmountBeforeDiscount =
 
         // إذا لم يكن هناك سعر مخصص للكمية، نضرب السعر في الكمية
         return sum + itemPrice * currentItem.quantity;
-      }, 0)
-    : 0; // إذا كانت العربة فارغة، الإجمالي يكون 0
+      }, 0) + shippingCost // إضافة مصاريف الشحن إلى الإجمالي
+    : shippingCost; // إذا كانت العربة فارغة، الإجمالي هو الشحن فقط
 
 // حساب الخصم بناءً على إجمالي الكمية في السلة
 const totalQuantityInCart = cartItems.items.reduce(
@@ -138,14 +139,15 @@ const totalQuantityInCart = cartItems.items.reduce(
 
 // تحديد قيمة الخصم بناءً على إجمالي الكمية في السلة
 let discount = 0;
-if (totalQuantityInCart >= 12) {
+if (totalQuantityInCart === 12) {
   discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة أو أكثر
-} else if (totalQuantityInCart >= 6) {
+} else if (totalQuantityInCart === 6) {
   discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع أو أكثر
 }
 
-// حساب المجموع النهائي بعد الخصم وإضافة الشحن
-const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
+// حساب المجموع النهائي بعد الخصم
+const totalCartAmount = totalCartAmountBeforeDiscount - discount;
+
 
  
   // const discount =
