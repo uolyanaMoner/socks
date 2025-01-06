@@ -138,9 +138,9 @@ const totalQuantityInCart = cartItems.items.reduce(
 
 // تحديد قيمة الخصم بناءً على إجمالي الكمية في السلة
 let discount = 0;
-if (totalQuantityInCart >= 12) {
+if (totalQuantityInCart === 12) {
   discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة أو أكثر
-} else if (totalQuantityInCart >= 6) {
+} else if (totalQuantityInCart === 6) {
   discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع أو أكثر
 }
 
