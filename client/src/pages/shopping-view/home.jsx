@@ -98,7 +98,7 @@ function ShoppingHome() {
         addToCart({
           userId,
           productId: getCurrentProductId,
-          quantity: 6,
+          quantity: 1,
         })
       ).then((data) => {
         if (data?.payload?.success) {

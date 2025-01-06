@@ -543,6 +543,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [additionalDetails, setAdditionalDetails] = useState(""); // حالة لتخزين نص المستخدم
   const { productList } = useSelector((state) => state.shopProducts);
   const [isExpanded, setIsExpanded] = useState(false); // حالة لعرض أو إخفاء الوصف الكامل
+  const [isLaptop, setIsLaptop] = useState(false);
 
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
@@ -677,12 +678,12 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     });
   }
 
-  function handleDialogClose() {
-    setOpen(false);
-    dispatch(setProductDetails());
-    setRating(0);
-    setReviewMsg("");
-  }
+  // function handleDialogClose() {
+  //   setOpen(false);
+  //   dispatch(setProductDetails());
+  //   setRating(0);
+  //   setReviewMsg("");
+  // }
 
   function handleAddReview() {
     dispatch(
@@ -755,6 +756,33 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       return descriptionLines?.slice(0, 3).join("\n"); // 3 أسطر فقط
     }
   };
+
+  useEffect(() => {
+    // Check if the device is a laptop based on screen width
+    const checkDeviceType = () => {
+      setIsLaptop(window.innerWidth > 1024); // افترض أن اللاب يبدأ من عرض أكبر من 1024 بكسل
+    };
+
+    checkDeviceType();
+    window.addEventListener("resize", checkDeviceType);
+
+    return () => {
+      window.removeEventListener("resize", checkDeviceType);
+    };
+  }, []);
+
+  const handleDialogClose = () => {
+    setOpen(false);
+    dispatch(setProductDetails()); // Reset product details
+    setRating(0);
+    setReviewMsg("");
+  };
+
+  // Only show the dialog if it's a laptop and there are product details
+  if (!isLaptop || !productDetails) {
+    return null;
+  }
+
 
 
   return (

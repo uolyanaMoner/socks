@@ -1329,7 +1329,7 @@ function MobileView() {
         </div>
 
         {(selectedColor === "black&white" || selectedColor === "white&black") &&
-          (quantity === 5 || quantity === 10) && (
+          (quantity > 1) && (
             <div className="mt-4">
               <label htmlFor="additionalInput" className="block font-bold">
                 Additional Details

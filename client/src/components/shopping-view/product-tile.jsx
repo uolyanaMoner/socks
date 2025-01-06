@@ -133,7 +133,7 @@ const handleProductClick = (productId) => {
         <CardContent className="p-4">
           <div className={`${isMobile ? ' ' : 'flex'} justify-between items-center mb-2`}>
             <h2 className="text-xl font-bold mb-2">{product.title}</h2>
-            <span className="text-lg font-semibold text-primary">6 socks</span>
+            {/* <span className="text-lg font-semibold text-primary">6 socks</span> */}
           </div>
           <div className={`flex justify-between ${isMobile ? ' ' : 'items-center'} mb-2`}
             style={{flexDirection: isMobile ? 'column' : ' '}}>
@@ -142,11 +142,11 @@ const handleProductClick = (productId) => {
                 product.salePrice > 0 ? "line-through" : ""
               } text-lg font-semibold text-primary`}
             >
-              {product.price * 6} EGP
+              {product.price} EGP
             </span>
             {product.salePrice > 0 ? (
               <span className="text-lg font-semibold text-primary">
-                {product.salePrice * 6} EGP
+                {product.salePrice} EGP
               </span>
             ) : null}
           </div>

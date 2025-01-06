@@ -192,7 +192,7 @@ function ShoppingListing() {
       addToCart({
         userId: user?.id,
         productId: getCurrentProductId,
-        quantity: 6,
+        quantity: 1,
       })
     ).then((data) => {
       if (data?.payload?.success) {
