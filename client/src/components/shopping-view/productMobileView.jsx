@@ -674,8 +674,6 @@
 // }
 // export default MobileView;
 
-
-
 // import { useLocation } from "react-router-dom";
 // import { Button } from "../ui/button";
 // import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -924,7 +922,7 @@
 
 //             {productDetails?.quantityPrices?.map((item, index) => (
 //               <option key={index} value={item.quantity}>
-//                 {item.quantity} 
+//                 {item.quantity}
 //               </option>
 //             ))}
 //           </select>
@@ -1005,14 +1003,11 @@
 
 // export default MobileView;
 
-
-
-
 import { useLocation, useParams } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import StarRatingComponent from "../common/star-rating";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Slider from "react-slick"; // إضافة الكاروسيل
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice"; // إضافة الفانكشن من الريدوكس
@@ -1042,6 +1037,7 @@ function MobileView() {
   const [additionalDetails, setAdditionalDetails] = useState(""); // حالة لتخزين نص المستخدم
   const [selectedImage, setSelectedImage] = useState(""); // لتخزين الصورة المحددة
   const { productId } = useParams(); // الحصول على معرّف المنتج من الرابط
+  const [isExpanded, setIsExpanded] = useState(false); // حالة لعرض أو إخفاء الوصف الكامل
   const productDetails = useSelector(
     (state) => state.shopProducts.productDetails
   ); // جلب بيانات المنتج من Redux
@@ -1061,7 +1057,7 @@ function MobileView() {
       try {
         await navigator.share({
           title: productDetails?.title,
-          text:'check it out now!',
+          text: "check it out now!",
           url: productUrl, // رابط المنتج
         });
         console.log("Product shared successfully!");
@@ -1184,6 +1180,18 @@ function MobileView() {
 
   const images = productDetails?.image ? productDetails?.image.split(",") : [];
 
+  const getDescription = () => {
+    if (!productDetails?.description) return "";
+    if (isExpanded) {
+      return productDetails.description; // الوصف بالكامل عند التوسيع
+    } else {
+      // سيتم إرجاع الوصف فقط لأهم 3 أسطر
+      const descriptionLines = productDetails.description.split("\n");
+      return descriptionLines.slice(0, 3).join("\n"); // 3 أسطر فقط
+    }
+  };
+
+
   return (
     <div className="p-4 pt-0">
       <div className="relative overflow-hidden rounded-lg">
@@ -1233,9 +1241,34 @@ function MobileView() {
           <h1 className="text-3xl font-extrabold mt-3 text-center">
             {productDetails?.title}
           </h1>
-          <p className="text-muted-foreground text-2xl mb-3 mt-4">
-            {productDetails?.description}
-          </p>
+          <p
+        className="text-muted-foreground text-2xl mb-3 mt-4"
+        style={{
+          maxHeight: isExpanded ? "none" : "4.5em", // عرض الوصف بالكامل عند التوسيع
+          overflow: "hidden", // إخفاء ما يزيد عن الأسطر المحددة
+          display: "-webkit-box", // استخدام box لعرض الأسطر بشكل مرتب
+          WebkitBoxOrient: "vertical", // لضمان العرض العمودي
+          WebkitLineClamp: isExpanded ? "none" : 3, // 3 أسطر فقط عند التقلص
+        }}
+      >
+        {getDescription()}
+      </p>
+
+      {/* زر لعرض الوصف بالكامل أو تقليصه */}
+      {productDetails?.description.split("\n").length > 3 && (
+        <Button
+          onClick={() => setIsExpanded(!isExpanded)}
+          variant="link"
+          style={{
+            padding: 0,
+            color: "blue",
+            textDecoration: "underline",
+            cursor: "pointer",
+          }}
+        >
+          {isExpanded ? "Show Less" : "Show More"}
+        </Button>
+      )}
         </div>
         <div className="flex items-center justify-between">
           <p
