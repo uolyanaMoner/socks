@@ -1061,7 +1061,7 @@ function MobileView() {
       try {
         await navigator.share({
           title: productDetails?.title,
-          text: productDetails?.description,
+          text:'check it out now!',
           url: productUrl, // رابط المنتج
         });
         console.log("Product shared successfully!");
