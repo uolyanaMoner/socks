@@ -31,9 +31,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import { getFeatureImages } from "@/store/common-slice";
 import Footer from "@/components/footer";
-import ShoppingHeader from "@/components/shopping-view/header";
-import axios from "axios";
-import { v4 as uuidv4 } from 'uuid'; // استيراد مكتبة UUID لتوليد id عشوائي
+import bg from "../../assets/bg.jpeg";
 
 
 const categoriesWithIcon = [
@@ -60,6 +58,7 @@ function ShoppingHome() {
   const { toast } = useToast();
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -147,7 +146,10 @@ function ShoppingHome() {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-center bg-no-repeat"
+    style={{
+      background:`url(${bg})`,
+    }} >
       <div
         className={`relative w-full overflow-hidden`}
         style={{ height: isMobile ? `200px` : `500px` }}
@@ -190,7 +192,7 @@ function ShoppingHome() {
           <ChevronRightIcon className="w-4 h-4" />
         </Button>
       </div>
-      <section className="py-12 bg-gray-50">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
             Shop by category
@@ -235,7 +237,7 @@ function ShoppingHome() {
         setOpen={setOpenDetailsDialog}
         productDetails={productDetails}
       />
-      <div className="container mb-5">
+      <div className="container bg-black text-white">
         <Footer />
       </div>
     </div>

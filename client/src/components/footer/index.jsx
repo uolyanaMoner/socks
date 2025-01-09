@@ -25,16 +25,16 @@ function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="hover:text-amber-700"
+              className="text-amber-700"
             >
               <Instagram />
             </a>
             <a
-              href="https://www.facebook.com/batei55/"
+              href="https://www.facebook.com/profile.php?id=61564666707253"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="hover:text-blue-600"
+              className="text-blue-600"
             >
               <Facebook />
             </a>

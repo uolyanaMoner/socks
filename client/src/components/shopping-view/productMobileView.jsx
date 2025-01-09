@@ -1236,7 +1236,7 @@ function MobileView() {
           />
         )}
       </div>
-      <div className="">
+      <div className="text-bold">
         <div>
           <h1 className="text-3xl font-extrabold mt-3 text-center">
             {productDetails?.title}
