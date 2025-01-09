@@ -68,8 +68,13 @@ function ShoppingHome() {
 
   function handleNavigateToListingPage(getCurrentItem, section) {
     sessionStorage.removeItem("filters");
+    const selectedCategories = [getCurrentItem.id];
+    if (getCurrentItem.id === "men" || getCurrentItem.id === "women") {
+      selectedCategories.push("unisex");
+    }
+
     const currentFilter = {
-      [section]: [getCurrentItem.id],
+      [section]: selectedCategories,
     };
 
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));

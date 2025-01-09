@@ -17,7 +17,6 @@ import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
-import { watermelon } from "@lucide/lab";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,20 +49,26 @@ function MenuItems() {
 
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem("filters");
+
+    let currentCategories = [getCurrentMenuItem.id];
+    if (getCurrentMenuItem.id === "men" || getCurrentMenuItem.id === "women") {
+      currentCategories.push("unisex");
+    }
+
     const currentFilter =
       getCurrentMenuItem.id !== "home" &&
       getCurrentMenuItem.id !== "products" &&
       getCurrentMenuItem.id !== "search"
-        ? {
-            category: [getCurrentMenuItem.id],
-          }
+        ? { category: currentCategories }
         : null;
 
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
 
     location.pathname.includes("listing") && currentFilter !== null
       ? setSearchParams(
-          new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
+          new URLSearchParams(
+            currentCategories.map((cat) => `category=${cat}`).join("&")
+          )
         )
       : navigate(getCurrentMenuItem.path);
   }
