@@ -1242,7 +1242,7 @@ function MobileView() {
             {productDetails?.title}
           </h1>
           <p
-        className="text-muted-foreground text-2xl mb-3 mt-4"
+        className="text-muted-foreground text-xl text-left mb-3 mt-4"
         style={{
           maxHeight: isExpanded ? "none" : "4.5em", // عرض الوصف بالكامل عند التوسيع
           overflow: "hidden", // إخفاء ما يزيد عن الأسطر المحددة
@@ -1344,12 +1344,12 @@ function MobileView() {
             </div>
           )}
 
-        <div className="flex items-center gap-2 mt-2">
+        {/* <div className="flex items-center gap-2 mt-2">
           <div className="flex items-center gap-0.5">
             <StarRatingComponent rating={rating} />
           </div>
           <span className="text-muted-foreground">({rating.toFixed(2)})</span>
-        </div>
+        </div> */}
         <div className="mt-4 mb-4 w-full gap-4 flex justify-between">
           <Button
             style={{ width: "70%" }}
@@ -1364,7 +1364,7 @@ function MobileView() {
           </Button>
         </div>
 
-        <Separator />
+        {/* <Separator />
         <div className="max-h-[300px] overflow-auto">
           <h2 className="text-xl font-bold mb-4">Reviews</h2>
           <div className="grid gap-6">
@@ -1399,7 +1399,7 @@ function MobileView() {
             </div>
             <Button onClick={handleAddReview}>Submit</Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

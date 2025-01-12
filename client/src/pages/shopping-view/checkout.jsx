@@ -1,5 +1,5 @@
 import Address from "@/components/shopping-view/address";
-import img from "../../assets/account.jpg";
+import img from "../../assets/cover.jpeg";
 import { useSelector } from "react-redux";
 import UserCartItemsContent from "@/components/shopping-view/cart-items-content";
 import { Button } from "@/components/ui/button";
@@ -196,16 +196,17 @@ const totalQuantityInCart =cartItems?.items?.reduce(
 
 
 // تحديد قيمة الخصم بناءً على إجمالي الكمية في السلة
-let discount = 0;
-if (totalQuantityInCart === 12) {
-  discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة بالضبط
-} else if (totalQuantityInCart === 6) {
-  discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع بالضبط
-}
+// let discount = 0;
+// if (totalQuantityInCart === 12) {
+//   discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة بالضبط
+// } else if (totalQuantityInCart === 6) {
+//   discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع بالضبط
+// }
 
 // حساب المجموع النهائي بعد الخصم وإضافة الشحن
-const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
+// const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
 
+const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
  
   // const discount =
   //   cartItems && cartItems.items && cartItems.items.length > 0
@@ -513,7 +514,8 @@ const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
           <div className="mt-8 space-y-4">
             <div className="flex justify-between">
               <span className="font-bold">Discount</span>
-              <span className="font-bold">{discount.toFixed(2)} EGP</span>
+              {/* <span className="font-bold">{discount.toFixed(2)} EGP</span> */}
+              <span className="font-bold">50%</span>
             </div>
             <div className="flex justify-between">
               <span className="font-bold">Shipping Cost</span>

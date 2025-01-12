@@ -14,7 +14,7 @@ function Banner() {
 
   return (
     <div style={bannerStyle}>
-      <h1 style={headingStyle}>Buy 6 socks and get 10% discount!</h1>
+      <h1 style={headingStyle}>Buy 10 socks and get 50% discount!</h1>
     </div>
   );
 }

@@ -627,7 +627,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   //   }
   // }
 
-    const shareProduct = async () => {
+  const shareProduct = async () => {
     const productUrl = window.location.href; // الحصول على رابط المنتج الحالي
 
     // تحقق من دعم المتصفح لميزة الشير
@@ -745,7 +745,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     return price || productDetails?.price; // لو مفيش سعر محدد للكمية هيرجع السعر الأصلي
   };
 
-
   const getDescription = () => {
     if (!productDetails?.description) return "";
     if (isExpanded) {
@@ -783,8 +782,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     return null;
   }
 
-
-
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 lg:max-h-[780px] max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -818,34 +815,33 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
             <p
-        className="text-muted-foreground text-2xl mb-3 mt-4"
-        style={{
-          maxHeight: isExpanded ? "none" : "4.5em", // عرض الوصف بالكامل عند التوسيع
-          overflow: "hidden", // إخفاء ما يزيد عن الأسطر المحددة
-          display: "-webkit-box", // استخدام box لعرض الأسطر بشكل مرتب
-          WebkitBoxOrient: "vertical", // لضمان العرض العمودي
-          WebkitLineClamp: isExpanded ? "none" : 3, // 3 أسطر فقط عند التقلص
-        }}
-      >
-        {getDescription()}
-      </p>
+              className="text-muted-foreground text-[16px] text-left mb-3 mt-4"
+              style={{
+                maxHeight: isExpanded ? "none" : "4.5em", // عرض الوصف بالكامل عند التوسيع
+                overflow: "hidden", // إخفاء ما يزيد عن الأسطر المحددة
+                display: "-webkit-box", // استخدام box لعرض الأسطر بشكل مرتب
+                WebkitBoxOrient: "vertical", // لضمان العرض العمودي
+                WebkitLineClamp: isExpanded ? "none" : 3, // 3 أسطر فقط عند التقلص
+              }}
+            >
+              {getDescription()}
+            </p>
 
-      {/* زر لعرض الوصف بالكامل أو تقليصه */}
-      {productDetails?.description?.split("\n").length > 3 && (
-        <Button
-          onClick={() => setIsExpanded(!isExpanded)}
-          variant="link"
-          style={{
-            padding: 0,
-            color: "blue",
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
-        >
-          {isExpanded ? "Show Less" : "Show More"}
-        </Button>
-      )}
-            
+            {/* زر لعرض الوصف بالكامل أو تقليصه */}
+            {productDetails?.description?.split("\n").length > 3 && (
+              <Button
+                onClick={() => setIsExpanded(!isExpanded)}
+                variant="link"
+                style={{
+                  padding: 0,
+                  color: "blue",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                }}
+              >
+                {isExpanded ? "Show Less" : "Show More"}
+              </Button>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <p
@@ -923,14 +919,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               </div>
             )}
 
-          <div className="flex items-center gap-2 mt-2">
+          {/* <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-0.5">
               <StarRatingComponent rating={averageReview} />
             </div>
             <span className="text-muted-foreground">
               ({averageReview.toFixed(2)})
             </span>
-          </div>
+          </div> */}
           <div className="mt-4 mb-4">
             <Button
               className="w-full"
@@ -942,7 +938,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </Button>
           </div>
           <Separator />
-          <div className="max-h-[300px] overflow-auto">
+          {/* <div>
+            {/* <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="grid gap-6">
               {reviews && reviews.length > 0 ? (
@@ -963,7 +960,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                       {/* <p className="text-muted-foreground">
                         {reviewItem.reviewMessage}
                       </p> */}
-                    </div>
+            {/* </div>
                   </div>
                 ))
               ) : (
@@ -983,9 +980,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 onChange={(event) => setReviewMsg(event.target.value)}
                 placeholder="Write a review..."
               /> */}
-              <Button onClick={handleAddReview}>Submit</Button>
+            {/* <Button onClick={handleAddReview}>Submit</Button>
             </div>
-          </div>
+          </div>   */}
+          {/* </div> */}
         </div>
       </DialogContent>
     </Dialog>
