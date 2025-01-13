@@ -338,6 +338,19 @@ function UserCartItemsContent({ cartItem }) {
       />
       <div className="flex-1">
         <h3 className="font-extrabold">{cartItem?.title}</h3>
+        <div className="flex items-center mt-2">
+      <h3 className="font-extrabold text-sm text-gray-600 mr-2">Color:</h3>
+      <span
+        className="block w-6 h-6 rounded-full border border-gray-300"
+        style={{
+          background:
+            cartItem?.color === "black&white"
+              ? "linear-gradient(to right, black 50%, white 50%)"
+              : cartItem?.color,
+        }}
+      ></span>
+    </div>
+
         <div className="flex items-center gap-2 mt-1">
           <Button
             variant="outline"
@@ -363,6 +376,7 @@ function UserCartItemsContent({ cartItem }) {
       </div>
       <div className="flex flex-col items-end">
         <p className="font-semibold">{finalPrice.toFixed(2)} EGP</p>
+
         <Trash
           onClick={() => handleCartItemDelete(cartItem)}
           className="cursor-pointer mt-1"

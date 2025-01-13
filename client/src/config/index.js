@@ -278,7 +278,7 @@ export const addressFormControls = [
     label: "Could you please send me the address details",
     name: "notes",
     componentType: "textarea",
-    placeholder: "Enter any additional notes",
+    placeholder: "اكتب اي ملاحظات للاوردر او العنوان عشان ميحصلش اي لغبطة",
   },
 ];
 
