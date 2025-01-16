@@ -46,6 +46,7 @@ function MenuItems() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem("filters");
 
@@ -77,9 +78,7 @@ function MenuItems() {
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
           onClick={() => handleNavigate(menuItem)}
-          className={`${
-            isMobile ? "text-lg" : "text-sm"
-          } font-medium cursor-pointer`}
+          className={`${isMobile ? 'text-lg': 'text-sm'} font-medium cursor-pointer`}
           key={menuItem.id}
         >
           {menuItem.label}
@@ -93,7 +92,7 @@ function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
-  const navigate = useNavigate(); // استخدام useNavigate لتوجيه المستخدم
+  const navigate = useNavigate();  // استخدام useNavigate لتوجيه المستخدم
   const dispatch = useDispatch();
 
   function handleLogout() {
@@ -103,7 +102,7 @@ function HeaderRightContent() {
 
   // هنا نقوم بتوجيه المستخدم إلى صفحة تسجيل الدخول
   function handleLogin() {
-    navigate("/auth/login"); // توجيه المستخدم إلى صفحة تسجيل الدخول
+    navigate("/auth/login");  // توجيه المستخدم إلى صفحة تسجيل الدخول
   }
 
   useEffect(() => {
@@ -162,9 +161,7 @@ function HeaderRightContent() {
           <DropdownMenuContent side="right" className="w-56">
             <DropdownMenuLabel>Not logged in</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogin}>
-              {" "}
-              {/* هذا الزر يقوم بتوجيه المستخدم لصفحة تسجيل الدخول */}
+            <DropdownMenuItem onClick={handleLogin}>  {/* هذا الزر يقوم بتوجيه المستخدم لصفحة تسجيل الدخول */}
               <LogIn className="mr-2 h-4 w-4" />
               Login
             </DropdownMenuItem>
@@ -175,11 +172,14 @@ function HeaderRightContent() {
   );
 }
 
+
+
+
 function UserCartContent() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
-  const navigate = useNavigate(); // استخدام useNavigate لتوجيه المستخدم
+  const navigate = useNavigate();  // استخدام useNavigate لتوجيه المستخدم
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -231,6 +231,7 @@ function ShoppingHeader() {
       <Banner />
       <header className="sticky top-0 z-40 w-full border-b bg-background h-[80px] content-center">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
+          {/* Logo */}
           <Link to="/shop/home" className="flex items-center gap-2">
             <img
               src={image}
@@ -238,10 +239,16 @@ function ShoppingHeader() {
                 isMobile ? "ml-[9rem]" : "ml-0"
               }`}
             />
-            {/* <Icon iconNode={watermelon} color="#fb0909" className="h-6 w-6" style={{ marginLeft: isMobile ? "10rem" : 0}} /> */}
             <span className="font-bold hidden lg:block">Watermelon</span>
           </Link>
-          <div className="flex justify-end w-full">
+
+          {/* Menu in center for large screens */}
+          <div className="hidden lg:flex lg:justify-center lg:flex-grow">
+            <MenuItems />
+          </div>
+
+          {/* Cart and header content */}
+          <div className="flex justify-end items-center w-full lg:w-auto">
             <div className="lg:hidden">
               <UserCartContent />
             </div>
@@ -259,9 +266,7 @@ function ShoppingHeader() {
             </Sheet>
           </div>
 
-          <div className="hidden lg:block">
-            <MenuItems />
-          </div>
+          {/* Additional header content */}
           <div className="hidden lg:block">
             <HeaderRightContent />
           </div>
