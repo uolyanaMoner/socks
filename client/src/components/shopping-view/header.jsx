@@ -248,7 +248,7 @@ function ShoppingHeader() {
           </div>
 
           {/* Cart and header content */}
-          <div className="flex justify-end items-center w-full lg:w-auto">
+          <div className="flex justify-end items-center gap-1 w-full lg:w-auto">
             <div className="lg:hidden">
               <UserCartContent />
             </div>
