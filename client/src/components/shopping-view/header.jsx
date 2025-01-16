@@ -242,22 +242,22 @@ function ShoppingHeader() {
             <span className="font-bold hidden lg:block">Watermelon</span>
           </Link>
           <div className="flex justify-end w-full">
-  <div className="lg:hidden">
-    <UserCartContent />
-  </div>
-  <Sheet>
-    <SheetTrigger asChild>
-      <Button variant="outline" size="icon" className="lg:hidden">
-        <Menu className="h-6 w-6" />
-        <span className="sr-only">Toggle header menu</span>
-      </Button>
-    </SheetTrigger>
-    <SheetContent side="left" className="w-full max-w-xs">
-      <MenuItems />
-      <HeaderRightContent />
-    </SheetContent>
-  </Sheet>
-</div>
+            <div className="lg:hidden">
+              <UserCartContent />
+            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="lg:hidden">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle header menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-full max-w-xs">
+                <MenuItems />
+                <HeaderRightContent />
+              </SheetContent>
+            </Sheet>
+          </div>
 
           <div className="hidden lg:block">
             <MenuItems />
