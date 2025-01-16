@@ -167,41 +167,38 @@ function ShoppingListing() {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
-  function handleAddToCard(getCurrentProductId, getTotalStock) {
-    console.log(cartItems);
-    let getCartItems = cartItems.items || [];
-
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
-      );
-      // if (indexOfCurrentItem > -1) {
-      //   const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-      //   if (getQuantity + 1 > getTotalStock) {
-      //     toast({
-      //       title: `Only ${getQuantity} quantity can be added for this item `,
-      //       variant: "destructive",
-      //     });
-
-      //     return;
-      //   }
-      // }
+  function handleAddToCard(getCurrentProductId) {
+    // استخراج userId من الـ user المسجل أو من localStorage إذا كان زائر
+    const userId = user?.id || localStorage.getItem('guestUserId');  
+  
+    // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
+    if (!userId) {
+      const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
+      localStorage.setItem('guestUserId', generatedUserId);  // حفظه في localStorage
     }
-
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-        toast({
-          title: "Product is added to cart",
-        });
-      }
-    });
+  
+    // إرسال الطلب فقط إذا كان لدينا userId
+    if (userId) {
+      dispatch(
+        addToCart({
+          userId,
+          productId: getCurrentProductId,
+          quantity: 1,
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(userId));  // تمرير userId بدلاً من user?.id
+          toast({
+            title: "Product is added to cart",
+          });
+        }
+      });
+    } else {
+      toast({
+        title: "Unable to get User ID",
+        variant: "destructive",
+      });
+    }
   }
 
   useEffect(() => {

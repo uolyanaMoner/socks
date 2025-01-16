@@ -260,13 +260,13 @@ export const addressFormControls = [
     type: "text",
     placeholder: "Enter your address",
   },
-  {
-    label: "City",
-    name: "city",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter your city",
-  },
+  // {
+  //   label: "City",
+  //   name: "city",
+  //   componentType: "input",
+  //   type: "text",
+  //   placeholder: "Enter your city",
+  // },
   {
     label: "Phone",
     name: "phone",

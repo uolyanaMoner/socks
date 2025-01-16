@@ -173,6 +173,49 @@ function HeaderRightContent() {
 }
 
 
+
+
+function UserCartContent() {
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
+  const navigate = useNavigate();  // استخدام useNavigate لتوجيه المستخدم
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(fetchCartItems(user.id)); // جلب العناصر في السلة إذا كان المستخدم مسجلاً
+    }
+  }, [dispatch, user]);
+
+  return (
+    <div className="flex lg:items-center lg:flex-row flex-col gap-4">
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          onClick={() => setOpenCartSheet(true)}
+          variant="outline"
+          size="icon"
+          className="relative"
+        >
+          <ShoppingCart className="w-6 h-6" />
+          <span className="absolute top-[-1px] right-[2px] font-bold text-sm">
+            {cartItems?.items?.length || 0}
+          </span>
+          <span className="sr-only">User cart</span>
+        </Button>
+        <UserCartWrapper
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
+      </Sheet>
+    </div>
+  );
+}
+
 function ShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -198,6 +241,9 @@ function ShoppingHeader() {
             {/* <Icon iconNode={watermelon} color="#fb0909" className="h-6 w-6" style={{ marginLeft: isMobile ? "10rem" : 0}} /> */}
             <span className="font-bold hidden lg:block">Watermelon</span>
           </Link>
+          <div className="lg:hidden mr-[-90px]"> 
+            <UserCartContent />
+          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="lg:hidden ">
@@ -216,6 +262,7 @@ function ShoppingHeader() {
           <div className="hidden lg:block">
             <HeaderRightContent />
           </div>
+         
         </div>
       </header>
     </>

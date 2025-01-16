@@ -12,9 +12,11 @@
 // import AddressCard from "./address-card";
 // import { useToast } from "../ui/use-toast";
 
+// // البيانات الأولية للنموذج
 // const initialAddressFormData = {
+//   fullName: "",
 //   address: "",
-//   city: "",
+//   // city: "",
 //   phone: "",
 //   notes: "",
 // };
@@ -27,6 +29,18 @@
 //   const { addressList } = useSelector((state) => state.shopAddress);
 //   const { toast } = useToast();
 
+//   // استخراج userId سواء كان المستخدم مسجلاً أو زائرًا
+//   const userId = user?.id || localStorage.getItem("guestUserId");
+
+//   // إنشاء userId فريد للزائر في حال عدم وجوده
+//   useEffect(() => {
+//     if (!userId && !localStorage.getItem("guestUserId")) {
+//       const generatedUserId = `guest-${Date.now()}`;
+//       localStorage.setItem("guestUserId", generatedUserId);
+//     }
+//   }, [userId]);
+
+//   // وظيفة إضافة أو تعديل العنوان
 //   function handleManageAddress(event) {
 //     event.preventDefault();
 
@@ -39,31 +53,32 @@
 //       return;
 //     }
 
+//     // في حالة التعديل
 //     currentEditedId !== null
 //       ? dispatch(
 //           editAddress({
-//             userId: user?.id,
+//             userId, // استخدام userId هنا
 //             addressId: currentEditedId,
 //             formData,
 //           })
 //         ).then((data) => {
 //           if (data?.payload?.success) {
-//             dispatch(fetchAllAddresses(user?.id));
+//             dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
 //             setCurrentEditedId(null);
 //             setFormData(initialAddressFormData);
 //             toast({
-//               title: "Address updates successfully!",
+//               title: "Address updated successfully!",
 //             });
 //           }
 //         })
 //       : dispatch(
 //           addNewAddress({
 //             ...formData,
-//             userId: user?.id,
+//             userId, // استخدام userId هنا
 //           })
 //         ).then((data) => {
 //           if (data?.payload?.success) {
-//             dispatch(fetchAllAddresses(user?.id));
+//             dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
 //             setFormData(initialAddressFormData);
 //             toast({
 //               title: "Address added successfully!",
@@ -72,12 +87,13 @@
 //         });
 //   }
 
+//   // وظيفة حذف العنوان
 //   function handleDeleteAddress(getCurrentAddress) {
 //     dispatch(
-//       deleteAddress({ userId: user?.id, addressId: getCurrentAddress._id })
+//       deleteAddress({ userId, addressId: getCurrentAddress._id }) // استخدام userId هنا
 //     ).then((data) => {
 //       if (data?.payload?.success) {
-//         dispatch(fetchAllAddresses(user?.id));
+//         dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
 //         toast({
 //           title: "Address deleted successfully!",
 //         });
@@ -85,28 +101,32 @@
 //     });
 //   }
 
+//   // وظيفة تعديل العنوان
 //   function handleEditAddress(getCurrentAddress) {
 //     setCurrentEditedId(getCurrentAddress?._id);
 //     setFormData({
 //       ...formData,
 //       address: getCurrentAddress?.address,
-//       city: getCurrentAddress?.city,
+//       // city: getCurrentAddress?.city,
 //       phone: getCurrentAddress?.phone,
 //       notes: getCurrentAddress?.notes,
+//       fullName: getCurrentAddress?.fullName,
 //     });
 //   }
 
+//   // التحقق من صحة النموذج
 //   function isFormValid() {
 //     return Object.keys(formData)
 //       .map((key) => formData[key].trim() !== "")
 //       .every((item) => item);
 //   }
 
+//   // جلب العناوين عند التمهيد
 //   useEffect(() => {
-//     dispatch(fetchAllAddresses(user?.id));
-//   }, [dispatch]);
-
-//   console.log(addressList, "addressList");
+//     if (userId) {
+//       dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
+//     }
+//   }, [dispatch, userId]);
 
 //   return (
 //     <Card>
@@ -145,6 +165,7 @@
 // export default Address;
 
 
+
 import { useEffect, useState } from "react";
 import CommonForm from "../common/form";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -163,7 +184,6 @@ import { useToast } from "../ui/use-toast";
 const initialAddressFormData = {
   fullName: "",
   address: "",
-  city: "",
   phone: "",
   notes: "",
 };
@@ -187,6 +207,13 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
     }
   }, [userId]);
 
+  // تعيين العنوان الأول كعنوان افتراضي عند وجود عناوين
+  useEffect(() => {
+    if (addressList && addressList.length > 0) {
+      setCurrentSelectedAddress(addressList[0]);
+    }
+  }, [addressList, setCurrentSelectedAddress]);
+
   // وظيفة إضافة أو تعديل العنوان
   function handleManageAddress(event) {
     event.preventDefault();
@@ -204,13 +231,13 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
     currentEditedId !== null
       ? dispatch(
           editAddress({
-            userId, // استخدام userId هنا
+            userId,
             addressId: currentEditedId,
             formData,
           })
         ).then((data) => {
           if (data?.payload?.success) {
-            dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
+            dispatch(fetchAllAddresses(userId));
             setCurrentEditedId(null);
             setFormData(initialAddressFormData);
             toast({
@@ -221,11 +248,11 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
       : dispatch(
           addNewAddress({
             ...formData,
-            userId, // استخدام userId هنا
+            userId,
           })
         ).then((data) => {
           if (data?.payload?.success) {
-            dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
+            dispatch(fetchAllAddresses(userId));
             setFormData(initialAddressFormData);
             toast({
               title: "Address added successfully!",
@@ -237,10 +264,10 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
   // وظيفة حذف العنوان
   function handleDeleteAddress(getCurrentAddress) {
     dispatch(
-      deleteAddress({ userId, addressId: getCurrentAddress._id }) // استخدام userId هنا
+      deleteAddress({ userId, addressId: getCurrentAddress._id })
     ).then((data) => {
       if (data?.payload?.success) {
-        dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
+        dispatch(fetchAllAddresses(userId));
         toast({
           title: "Address deleted successfully!",
         });
@@ -254,7 +281,6 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
     setFormData({
       ...formData,
       address: getCurrentAddress?.address,
-      city: getCurrentAddress?.city,
       phone: getCurrentAddress?.phone,
       notes: getCurrentAddress?.notes,
       fullName: getCurrentAddress?.fullName,
@@ -271,7 +297,7 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
   // جلب العناوين عند التمهيد
   useEffect(() => {
     if (userId) {
-      dispatch(fetchAllAddresses(userId)); // استخدام userId هنا
+      dispatch(fetchAllAddresses(userId));
     }
   }, [dispatch, userId]);
 
