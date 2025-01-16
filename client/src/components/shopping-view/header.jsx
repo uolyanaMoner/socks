@@ -46,7 +46,6 @@ function MenuItems() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem("filters");
 
@@ -78,7 +77,9 @@ function MenuItems() {
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
           onClick={() => handleNavigate(menuItem)}
-          className={`${isMobile ? 'text-lg': 'text-sm'} font-medium cursor-pointer`}
+          className={`${
+            isMobile ? "text-lg" : "text-sm"
+          } font-medium cursor-pointer`}
           key={menuItem.id}
         >
           {menuItem.label}
@@ -92,7 +93,7 @@ function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
-  const navigate = useNavigate();  // استخدام useNavigate لتوجيه المستخدم
+  const navigate = useNavigate(); // استخدام useNavigate لتوجيه المستخدم
   const dispatch = useDispatch();
 
   function handleLogout() {
@@ -102,7 +103,7 @@ function HeaderRightContent() {
 
   // هنا نقوم بتوجيه المستخدم إلى صفحة تسجيل الدخول
   function handleLogin() {
-    navigate("/auth/login");  // توجيه المستخدم إلى صفحة تسجيل الدخول
+    navigate("/auth/login"); // توجيه المستخدم إلى صفحة تسجيل الدخول
   }
 
   useEffect(() => {
@@ -161,7 +162,9 @@ function HeaderRightContent() {
           <DropdownMenuContent side="right" className="w-56">
             <DropdownMenuLabel>Not logged in</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogin}>  {/* هذا الزر يقوم بتوجيه المستخدم لصفحة تسجيل الدخول */}
+            <DropdownMenuItem onClick={handleLogin}>
+              {" "}
+              {/* هذا الزر يقوم بتوجيه المستخدم لصفحة تسجيل الدخول */}
               <LogIn className="mr-2 h-4 w-4" />
               Login
             </DropdownMenuItem>
@@ -172,14 +175,11 @@ function HeaderRightContent() {
   );
 }
 
-
-
-
 function UserCartContent() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
-  const navigate = useNavigate();  // استخدام useNavigate لتوجيه المستخدم
+  const navigate = useNavigate(); // استخدام useNavigate لتوجيه المستخدم
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -241,28 +241,30 @@ function ShoppingHeader() {
             {/* <Icon iconNode={watermelon} color="#fb0909" className="h-6 w-6" style={{ marginLeft: isMobile ? "10rem" : 0}} /> */}
             <span className="font-bold hidden lg:block">Watermelon</span>
           </Link>
-          <div className="lg:hidden mr-[-90px]"> 
-            <UserCartContent />
-          </div>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="lg:hidden ">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle header menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-xs">
-              <MenuItems />
-              <HeaderRightContent />
-            </SheetContent>
-          </Sheet>
+          <div className="flex justify-end w-full">
+  <div className="lg:hidden">
+    <UserCartContent />
+  </div>
+  <Sheet>
+    <SheetTrigger asChild>
+      <Button variant="outline" size="icon" className="lg:hidden">
+        <Menu className="h-6 w-6" />
+        <span className="sr-only">Toggle header menu</span>
+      </Button>
+    </SheetTrigger>
+    <SheetContent side="left" className="w-full max-w-xs">
+      <MenuItems />
+      <HeaderRightContent />
+    </SheetContent>
+  </Sheet>
+</div>
+
           <div className="hidden lg:block">
             <MenuItems />
           </div>
           <div className="hidden lg:block">
             <HeaderRightContent />
           </div>
-         
         </div>
       </header>
     </>
