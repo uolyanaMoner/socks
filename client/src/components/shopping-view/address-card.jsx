@@ -27,7 +27,7 @@ function AddressCard({
       >
         <Label>Full Name: {addressInfo?.fullName}</Label>
         <Label>Address: {addressInfo?.address}</Label>
-        <Label>City: {addressInfo?.city}</Label>
+        {/* <Label>City: {addressInfo?.city}</Label> */}
         <Label>Phone: {addressInfo?.phone}</Label>
         <Label>Details: {addressInfo?.notes}</Label>
       </CardContent>
