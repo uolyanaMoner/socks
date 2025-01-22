@@ -24,12 +24,24 @@ function AuthRegister() {
       if (data?.payload?.success) {
         toast({
           title: data?.payload?.message,
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
         navigate("/auth/login");
       } else {
         toast({
           title: data?.payload?.message,
           variant: "destructive",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });

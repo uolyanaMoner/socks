@@ -673,6 +673,12 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         dispatch(fetchCartItems(userId));
         toast({
           title: "Product is added to cart",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });
@@ -685,26 +691,26 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   //   setReviewMsg("");
   // }
 
-  function handleAddReview() {
-    dispatch(
-      addReview({
-        productId: productDetails?._id,
-        userId: user?.id,
-        userName: user?.userName,
-        reviewMessage: reviewMsg,
-        reviewValue: rating,
-      })
-    ).then((data) => {
-      if (data.payload.success) {
-        setRating(0);
-        setReviewMsg("");
-        dispatch(getReviews(productDetails?._id));
-        toast({
-          title: "Review added successfully!",
-        });
-      }
-    });
-  }
+  // function handleAddReview() {
+  //   dispatch(
+  //     addReview({
+  //       productId: productDetails?._id,
+  //       userId: user?.id,
+  //       userName: user?.userName,
+  //       reviewMessage: reviewMsg,
+  //       reviewValue: rating,
+  //     })
+  //   ).then((data) => {
+  //     if (data.payload.success) {
+  //       setRating(0);
+  //       setReviewMsg("");
+  //       dispatch(getReviews(productDetails?._id));
+  //       toast({
+  //         title: "Review added successfully!",
+  //       });
+  //     }
+  //   });
+  // }
 
   useEffect(() => {
     if (productDetails !== null) dispatch(getReviews(productDetails?._id));

@@ -190,6 +190,12 @@ function ShoppingListing() {
           dispatch(fetchCartItems(userId));  // تمرير userId بدلاً من user?.id
           toast({
             title: "Product is added to cart",
+            style: {
+              position: "fixed",
+              left: "50%",
+              transform: "translateX(-50%)",
+              bottom:  "20px" , // أسفل الصفحة عند الموبايل
+            },
           });
         }
       });
@@ -197,6 +203,12 @@ function ShoppingListing() {
       toast({
         title: "Unable to get User ID",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
     }
   }

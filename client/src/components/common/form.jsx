@@ -1,8 +1,13 @@
-
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -22,7 +27,15 @@ function CommonForm({
     const price = formData.quantityPrice?.trim();
 
     if (!quantity || !price) {
-      toast({ title: "Please enter both quantity and price." });
+      toast({
+        title: "Please enter both quantity and price.",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
+      });
       return;
     }
 
@@ -53,13 +66,14 @@ function CommonForm({
 
   // Function to handle deleting a specific quantity-price pair
   const handleDeleteQuantityPrice = (index) => {
-    const updatedQuantityPrices = formData.quantityPrices.filter((_, idx) => idx !== index);
+    const updatedQuantityPrices = formData.quantityPrices.filter(
+      (_, idx) => idx !== index
+    );
     setFormData({
       ...formData,
       quantityPrices: updatedQuantityPrices,
     });
   };
-
 
   // Render input fields based on control type
   function renderInputsByComponentType(getControlItem) {
@@ -163,13 +177,13 @@ function CommonForm({
                     placeholder="Enter price for quantity (optional)"
                     value={formData.quantityPrice || ""}
                     onChange={(e) =>
-                      setFormData({ ...formData, quantityPrice: e.target.value })
+                      setFormData({
+                        ...formData,
+                        quantityPrice: e.target.value,
+                      })
                     }
                   />
-                  <Button
-                    type="button"
-                    onClick={handleAddQuantityPrice}
-                  >
+                  <Button type="button" onClick={handleAddQuantityPrice}>
                     Add
                   </Button>
                 </div>
@@ -182,7 +196,11 @@ function CommonForm({
                           placeholder="Quantity"
                           value={item.quantity}
                           onChange={(e) =>
-                            handleQuantityPriceChange(index, "quantity", e.target.value)
+                            handleQuantityPriceChange(
+                              index,
+                              "quantity",
+                              e.target.value
+                            )
                           }
                         />
                         <Input
@@ -190,10 +208,14 @@ function CommonForm({
                           placeholder="Price"
                           value={item.price}
                           onChange={(e) =>
-                            handleQuantityPriceChange(index, "price", e.target.value)
+                            handleQuantityPriceChange(
+                              index,
+                              "price",
+                              e.target.value
+                            )
                           }
                         />
-                         <Button
+                        <Button
                           variant="destructive"
                           onClick={() => handleDeleteQuantityPrice(index)}
                         >
@@ -220,4 +242,3 @@ function CommonForm({
 }
 
 export default CommonForm;
-

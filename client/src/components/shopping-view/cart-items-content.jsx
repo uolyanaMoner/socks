@@ -312,11 +312,18 @@ function UserCartItemsContent({ cartItem }) {
 
   // دالة لحذف العنصر من السلة
   function handleCartItemDelete(getCartItem) {
+
     dispatch(deleteCartItem({ userId, productId: getCartItem?.productId })).then(
       (data) => {
         if (data?.payload?.success) {
           toast({
             title: "Cart item is deleted successfully",
+            style: {
+              position: "fixed",
+              left: "50%",
+              transform: "translateX(-50%)",
+              bottom:  "20px" , // أسفل الصفحة عند الموبايل
+            },
           });
         }
       }

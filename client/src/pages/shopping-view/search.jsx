@@ -68,6 +68,12 @@ function SearchProducts() {
         dispatch(fetchCartItems(user?.id));
         toast({
           title: "Product is added to cart",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });

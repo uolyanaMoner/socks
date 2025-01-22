@@ -1115,6 +1115,12 @@ function MobileView() {
         dispatch(getReviews(productDetails?._id));
         toast({
           title: "Review added successfully!",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });
@@ -1161,6 +1167,12 @@ function MobileView() {
         dispatch(fetchCartItems(userId));
         toast({
           title: "Product is added to cart",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });

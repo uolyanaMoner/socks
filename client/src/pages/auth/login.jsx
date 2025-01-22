@@ -18,16 +18,30 @@ function AuthLogin() {
 
   function onSubmit(event) {
     event.preventDefault();
+    const isMobile = window.innerWidth <= 768;
 
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
         toast({
           title: data?.payload?.message,
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
+          
         });
       } else {
         toast({
           title: data?.payload?.message,
           variant: "destructive",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     });

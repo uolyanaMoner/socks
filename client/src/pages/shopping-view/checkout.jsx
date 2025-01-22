@@ -145,6 +145,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Your cart is empty. Please add items to proceed",
         variant: "destructive",
+         style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
       });
       return;
     }
@@ -153,6 +159,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Please select your government to proceed.",
         variant: "destructive",
+         style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
       });
       return;
     }
@@ -161,6 +173,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Please select one address to proceed.",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -169,6 +187,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Please select your government to proceed.",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -264,6 +288,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Your cart is empty. Please add items to proceed",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -272,6 +302,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Please select one address to proceed.",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -280,6 +316,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       toast({
         title: "Please select your government to proceed.",
         variant: "destructive",
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -365,6 +407,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         toast({
           title: "Failed to create order. Try again.",
           variant: "destructive",
+          style: {
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          },
         });
       }
     }
