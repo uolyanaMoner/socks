@@ -150,178 +150,15 @@
 
 // export default AdminOrderDetailsView;
 
-// import { useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   getAllOrdersForAdmin,
-//   getOrderDetailsForAdmin,
-//   updateOrderStatus,
-// } from "@/store/admin/order-slice";
-// import { useToast } from "../ui/use-toast";
-// import { DialogContent } from "../ui/dialog";
-// import { Label } from "../ui/label";
-// import { Separator } from "../ui/separator";
-// import { Badge } from "../ui/badge";
-// import CommonForm from "../common/form";
-
-// const initialFormData = {
-//   status: "",
-// };
-
-// function AdminOrderDetailsView({ orderDetails }) {
-//   const [formData, setFormData] = useState(initialFormData);
-//   const [loading, setLoading] = useState(false);
-
-//   const dispatch = useDispatch();
-//   const { toast } = useToast();
-//   const { user } = useSelector((state) => state.auth);
-
-//   const handleUpdateStatus = async (event) => {
-//     event.preventDefault();
-//     setLoading(true);
-//     try {
-//       const response = await dispatch(
-//         updateOrderStatus({
-//           id: orderDetails?._id,
-//           orderStatus: formData.status,
-//         })
-//       );
-
-//       if (response?.payload?.success) {
-//         await dispatch(getOrderDetailsForAdmin(orderDetails?._id));
-//         await dispatch(getAllOrdersForAdmin());
-//         setFormData(initialFormData);
-//         toast({ title: response?.payload?.message });
-//       } else {
-//         toast({ title: "فشل في تحديث الحالة" });
-//       }
-//     } catch (error) {
-//       toast({ title: "حدث خطأ أثناء التحديث" });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <DialogContent className="sm:max-w-[700px]" dir="rtl">
-//       <div className="grid gap-4">
-//         {/* بيانات الطلب الأساسية */}
-//         <div className="grid gap-2">
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">رقم الطلب</p>
-//             <Label>{orderDetails?._id}</Label>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">تاريخ الطلب</p>
-//             <Label>{orderDetails?.orderDate?.split("T")[0]}</Label>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">السعر</p>
-//             <Label>{orderDetails?.totalAmount} جنيه</Label>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">طريقة الدفع</p>
-//             <Label>{orderDetails?.paymentMethod}</Label>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">حالة الدفع</p>
-//             <Label>{orderDetails?.paymentStatus}</Label>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <p className="font-medium">حالة الطلب</p>
-//             <Badge
-//               className={`py-1 px-3 text-white ${
-//                 orderDetails?.orderStatus === "confirmed"
-//                   ? "bg-green-500"
-//                   : orderDetails?.orderStatus === "rejected"
-//                   ? "bg-red-600"
-//                   : "bg-gray-500"
-//               }`}
-//             >
-//               {orderDetails?.orderStatus}
-//             </Badge>
-//           </div>
-//         </div>
-
-//         <Separator />
-
-//         {/* تفاصيل الطلب مع التمرير */}
-//         <div className="overflow-auto max-h-[350px] border p-2 rounded-md">
-//           <div className="grid gap-2">
-//             {orderDetails?.cartItems?.length > 0 ? (
-//               orderDetails?.cartItems.map((item, index) => (
-//                 <div
-//                   key={index}
-//                   className="flex grid grid-cols-2 flex-wrap justify-between border p-2 bg-gray-50 rounded-sm"
-//                 >
-//                   <span>المنتج: {item.title}</span>
-//                   <span>الكمية: {item.quantity}</span>
-//                   <span>اللون: {item.color}</span>
-//                   <span>السعر: {item.price}</span>
-//                   <span>تفاصيل إضافية: {item.additionalDetails}</span>
-//                 </div>
-//               ))
-//             ) : (
-//               <span>لا توجد عناصر في السلة</span>
-//             )}
-//           </div>
-//         </div>
-
-//         <Separator />
-
-//         {/* تفاصيل الشحن */}
-//         <div className="grid gap-2">
-//           <p className="font-medium">معلومات الشحن</p>
-//           <div className="grid grid-cols-2">
-//             <span>الاسم: {orderDetails?.addressInfo?.fullName}</span>
-//             <span>العنوان: {orderDetails?.addressInfo?.address}</span>
-//             <span>المدينة: {orderDetails?.addressInfo?.city}</span>
-//             <span>الهاتف: {orderDetails?.addressInfo?.phone}</span>
-//             <span>تفاصيل: {orderDetails?.addressInfo?.notes}</span>
-//           </div>
-//         </div>
-
-//         <Separator />
-
-//         {/* نموذج تحديث حالة الطلب */}
-//         <div className="max-w-[600px]">
-//           <CommonForm
-//             formControls={[
-//               {
-//                 label: "حالة الطلب",
-//                 name: "status",
-//                 componentType: "select",
-//                 options: [
-//                   { id: "pending", label: "قيد الانتظار" },
-//                   { id: "inProcess", label: "تحت المعالجة" },
-//                   { id: "inShipping", label: "قيد الشحن" },
-//                   { id: "delivered", label: "تم التسليم" },
-//                   { id: "rejected", label: "مرفوض" },
-//                   { id: "confirmed", label: "مؤكد" },
-//                 ],
-//               },
-//             ]}
-//             formData={formData}
-//             setFormData={setFormData}
-//             buttonText={loading ? "يتم التحديث..." : "تحديث حالة الطلب"}
-//             onSubmit={handleUpdateStatus}
-//           />
-//         </div>
-//       </div>
-//     </DialogContent>
-//   );
-// }
-
-// export default AdminOrderDetailsView;
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getAllOrdersForAdmin,
   getOrderDetailsForAdmin,
   updateOrderStatus,
 } from "@/store/admin/order-slice";
 import { useToast } from "../ui/use-toast";
-import { useParams } from "react-router-dom"; // إضافة useHistory
+import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
@@ -331,20 +168,13 @@ const initialFormData = {
   status: "",
 };
 
-function AdminOrderDetailsView() {
+function AdminOrderDetailsView({ orderDetails }) {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const { orderId } = useParams(); // الحصول على orderId من الرابط
-  const { orderDetails, isLoading, error } = useSelector(
-    (state) => state.adminOrder
-  );
-
-  useEffect(() => {
-    dispatch(getOrderDetailsForAdmin(orderId));
-  }, [dispatch, orderId]);
+  const { user } = useSelector((state) => state.auth);
 
   const handleUpdateStatus = async (event) => {
     event.preventDefault();
@@ -359,55 +189,21 @@ function AdminOrderDetailsView() {
 
       if (response?.payload?.success) {
         await dispatch(getOrderDetailsForAdmin(orderDetails?._id));
-        toast({
-          title: response?.payload?.message,
-          style: {
-            position: "fixed",
-            left: "50%",
-            transform: "translateX(-50%)",
-            bottom:  "20px" , // أسفل الصفحة عند الموبايل
-          },
-        });
+        await dispatch(getAllOrdersForAdmin());
+        setFormData(initialFormData);
+        toast({ title: response?.payload?.message });
       } else {
-        toast({
-          title: "فشل في تحديث الحالة",
-          style: {
-            position: "fixed",
-            left: "50%",
-            transform: "translateX(-50%)",
-            bottom:  "20px" , // أسفل الصفحة عند الموبايل
-          },
-        });
+        toast({ title: "فشل في تحديث الحالة" });
       }
     } catch (error) {
-      toast({
-        title: "حدث خطأ أثناء التحديث",
-        style: {
-          position: "fixed",
-          left: "50%",
-          transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
-        },
-      });
+      toast({ title: "حدث خطأ أثناء التحديث" });
     } finally {
       setLoading(false);
     }
   };
 
-  if (isLoading) {
-    return <p>جاري تحميل تفاصيل الطلب...</p>;
-  }
-
-  if (error) {
-    return <p>خطأ: {error}</p>;
-  }
-
-  if (!orderDetails) {
-    return <p>لم يتم العثور على تفاصيل الطلب.</p>;
-  }
-
   return (
-    <div className="p-4">
+    <DialogContent className="sm:max-w-[700px]" dir="rtl">
       <div className="grid gap-4">
         {/* بيانات الطلب الأساسية */}
         <div className="grid gap-2">
@@ -512,8 +308,212 @@ function AdminOrderDetailsView() {
           />
         </div>
       </div>
-    </div>
+    </DialogContent>
   );
 }
 
 export default AdminOrderDetailsView;
+
+// import { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   getOrderDetailsForAdmin,
+//   updateOrderStatus,
+// } from "@/store/admin/order-slice";
+// import { useToast } from "../ui/use-toast";
+// import { useParams } from "react-router-dom"; // إضافة useHistory
+// import { Label } from "../ui/label";
+// import { Separator } from "../ui/separator";
+// import { Badge } from "../ui/badge";
+// import CommonForm from "../common/form";
+
+// const initialFormData = {
+//   status: "",
+// };
+
+// function AdminOrderDetailsView() {
+//   const [formData, setFormData] = useState(initialFormData);
+//   const [loading, setLoading] = useState(false);
+
+//   const dispatch = useDispatch();
+//   const { toast } = useToast();
+//   const { orderId } = useParams(); // الحصول على orderId من الرابط
+//   const { orderDetails, isLoading, error } = useSelector(
+//     (state) => state.adminOrder
+//   );
+
+//   useEffect(() => {
+//     dispatch(getOrderDetailsForAdmin(orderId));
+//   }, [dispatch, orderId]);
+
+//   const handleUpdateStatus = async (event) => {
+//     event.preventDefault();
+//     setLoading(true);
+//     try {
+//       const response = await dispatch(
+//         updateOrderStatus({
+//           id: orderDetails?._id,
+//           orderStatus: formData.status,
+//         })
+//       );
+
+//       if (response?.payload?.success) {
+//         await dispatch(getOrderDetailsForAdmin(orderDetails?._id));
+//         toast({
+//           title: response?.payload?.message,
+//           style: {
+//             position: "fixed",
+//             left: "50%",
+//             transform: "translateX(-50%)",
+//             bottom:  "20px" , // أسفل الصفحة عند الموبايل
+//           },
+//         });
+//       } else {
+//         toast({
+//           title: "فشل في تحديث الحالة",
+//           style: {
+//             position: "fixed",
+//             left: "50%",
+//             transform: "translateX(-50%)",
+//             bottom:  "20px" , // أسفل الصفحة عند الموبايل
+//           },
+//         });
+//       }
+//     } catch (error) {
+//       toast({
+//         title: "حدث خطأ أثناء التحديث",
+//         style: {
+//           position: "fixed",
+//           left: "50%",
+//           transform: "translateX(-50%)",
+//           bottom:  "20px" , // أسفل الصفحة عند الموبايل
+//         },
+//       });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   if (isLoading) {
+//     return <p>جاري تحميل تفاصيل الطلب...</p>;
+//   }
+
+//   if (error) {
+//     return <p>خطأ: {error}</p>;
+//   }
+
+//   if (!orderDetails) {
+//     return <p>لم يتم العثور على تفاصيل الطلب.</p>;
+//   }
+
+//   return (
+//     <div className="p-4">
+//       <div className="grid gap-4">
+//         {/* بيانات الطلب الأساسية */}
+//         <div className="grid gap-2">
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">رقم الطلب</p>
+//             <Label>{orderDetails?._id}</Label>
+//           </div>
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">تاريخ الطلب</p>
+//             <Label>{orderDetails?.orderDate?.split("T")[0]}</Label>
+//           </div>
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">السعر</p>
+//             <Label>{orderDetails?.totalAmount} جنيه</Label>
+//           </div>
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">طريقة الدفع</p>
+//             <Label>{orderDetails?.paymentMethod}</Label>
+//           </div>
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">حالة الدفع</p>
+//             <Label>{orderDetails?.paymentStatus}</Label>
+//           </div>
+//           <div className="flex items-center justify-between">
+//             <p className="font-medium">حالة الطلب</p>
+//             <Badge
+//               className={`py-1 px-3 text-white ${
+//                 orderDetails?.orderStatus === "confirmed"
+//                   ? "bg-green-500"
+//                   : orderDetails?.orderStatus === "rejected"
+//                   ? "bg-red-600"
+//                   : "bg-gray-500"
+//               }`}
+//             >
+//               {orderDetails?.orderStatus}
+//             </Badge>
+//           </div>
+//         </div>
+
+//         <Separator />
+
+//         {/* تفاصيل الطلب مع التمرير */}
+//         <div className="overflow-auto max-h-[350px] border p-2 rounded-md">
+//           <div className="grid gap-2">
+//             {orderDetails?.cartItems?.length > 0 ? (
+//               orderDetails?.cartItems.map((item, index) => (
+//                 <div
+//                   key={index}
+//                   className="flex grid grid-cols-2 flex-wrap justify-between border p-2 bg-gray-50 rounded-sm"
+//                 >
+//                   <span>المنتج: {item.title}</span>
+//                   <span>الكمية: {item.quantity}</span>
+//                   <span>اللون: {item.color}</span>
+//                   <span>السعر: {item.price}</span>
+//                   <span>تفاصيل إضافية: {item.additionalDetails}</span>
+//                 </div>
+//               ))
+//             ) : (
+//               <span>لا توجد عناصر في السلة</span>
+//             )}
+//           </div>
+//         </div>
+
+//         <Separator />
+
+//         {/* تفاصيل الشحن */}
+//         <div className="grid gap-2">
+//           <p className="font-medium">معلومات الشحن</p>
+//           <div className="grid grid-cols-2">
+//             <span>الاسم: {orderDetails?.addressInfo?.fullName}</span>
+//             <span>العنوان: {orderDetails?.addressInfo?.address}</span>
+//             <span>المدينة: {orderDetails?.addressInfo?.city}</span>
+//             <span>الهاتف: {orderDetails?.addressInfo?.phone}</span>
+//             <span>تفاصيل: {orderDetails?.addressInfo?.notes}</span>
+//           </div>
+//         </div>
+
+//         <Separator />
+
+//         {/* نموذج تحديث حالة الطلب */}
+//         <div className="max-w-[600px]">
+//           <CommonForm
+//             formControls={[
+//               {
+//                 label: "حالة الطلب",
+//                 name: "status",
+//                 componentType: "select",
+//                 options: [
+//                   { id: "pending", label: "قيد الانتظار" },
+//                   { id: "inProcess", label: "تحت المعالجة" },
+//                   { id: "inShipping", label: "قيد الشحن" },
+//                   { id: "delivered", label: "تم التسليم" },
+//                   { id: "rejected", label: "مرفوض" },
+//                   { id: "confirmed", label: "مؤكد" },
+//                 ],
+//               },
+//             ]}
+//             formData={formData}
+//             setFormData={setFormData}
+//             buttonText={loading ? "يتم التحديث..." : "تحديث حالة الطلب"}
+//             onSubmit={handleUpdateStatus}
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default AdminOrderDetailsView;
