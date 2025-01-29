@@ -159,6 +159,13 @@ export const addProductFormElements = [
     placeholder: "Enter product color",
   },
   {
+    label: "Size",
+    name: "size",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product size",
+  },
+  {
     label: "Brand",
     name: "brand",
     componentType: "select",

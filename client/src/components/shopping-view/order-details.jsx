@@ -60,6 +60,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                       <span>Quantity: {item.quantity}</span>
                       <span>Price: {item.price} EGP</span>
                       <span>Color : {item.color}</span>
+                      <span>Size : {item.size}</span>
                     </li>
                   ))
                 : null}

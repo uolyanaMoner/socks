@@ -339,6 +339,7 @@ const initialFormData = {
   salePrice: "",
   totalStock: "",
   color: "",
+  size:"",
   quantityPrices: [], // إضافة quantityPrices هنا
 };
 

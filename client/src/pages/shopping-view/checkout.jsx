@@ -221,6 +221,7 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
           title: singleCartItem?.title,
           image: singleCartItem?.image,
           color: singleCartItem?.color,
+          size: singleCartItem?.size,
           additionalDetails: singleCartItem?.additionalDetails,
           price:
             singleCartItem?.salePrice > 0
@@ -348,6 +349,7 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         title: singleCartItem?.title,
         image: singleCartItem?.image,
         color: singleCartItem?.color,
+        size: singleCartItem?.size,
         additionalDetails: singleCartItem?.additionalDetails,
         price:
           singleCartItem?.salePrice > 0

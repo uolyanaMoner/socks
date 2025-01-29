@@ -1042,7 +1042,9 @@ function MobileView() {
     (state) => state.shopProducts.productDetails
   ); // جلب بيانات المنتج من Redux
   const [loading, setLoading] = useState(true);
-
+  const [availableSizes, setAvailableSizes] = useState([]);
+  const [selectedSize, setSelectedSize] = useState(""); 
+  
   useEffect(() => {
     // جلب تفاصيل المنتج عبر الـ ID
     dispatch(fetchProductDetails(productId)).then(() => setLoading(false));
@@ -1083,6 +1085,26 @@ function MobileView() {
       }
     }
   }, [productDetails?.color]);
+
+
+  useEffect(() => {
+    const sizes = Array.isArray(productDetails?.size)
+      ? productDetails?.size
+      : productDetails?.size
+      ? productDetails?.size.split(" and ")
+      : [];
+  
+    setAvailableSizes(sizes);
+  
+    if (sizes.length) {
+      setSelectedSize(sizes[0]); // اختيار الحجم الأول تلقائيًا
+    }
+  }, [productDetails?.size]);
+  
+  const handleSizeChange = (event) => {
+    setSelectedSize(event.target.value);
+  };
+  
 
   const handleQuantityChange = (event) => {
     const selectedQuantity = parseInt(event.target.value);
@@ -1156,10 +1178,12 @@ function MobileView() {
       userId,
       productId: getCurrentProductId,
       quantity,
-      price: selectedPrice, // Store the selected price for the quantity
+      price: selectedPrice,
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
+      ...(availableSizes.length > 0 && { size: selectedSize }), // تضمين الحجم فقط إذا كان متاحًا
     };
+    
     console.log("cartItem", cartItem);
     // Dispatch action to add the product to cart
     dispatch(addToCart(cartItem)).then((data) => {
@@ -1322,6 +1346,25 @@ function MobileView() {
             </select>
           )}
         </div>
+        {availableSizes.length > 0 && (
+            <div className="mt-1">
+              <label htmlFor="size" className="block font-bold">
+                Choose Size:
+              </label>
+              <select
+                id="size"
+                value={selectedSize}
+                onChange={handleSizeChange}
+                className="border rounded p-2 w-full"
+              >
+                {availableSizes.map((size, index) => (
+                  <option key={index} value={size}>
+                    {size.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         <div className="mt-1">
           <Label>Quantity</Label>
           <select

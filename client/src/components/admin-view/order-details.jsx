@@ -461,6 +461,7 @@ function AdminOrderDetailsView() {
                   <span>المنتج: {item.title}</span>
                   <span>الكمية: {item.quantity}</span>
                   <span>اللون: {item.color}</span>
+                  <span>المقاس: {item.size}</span>
                   <span>السعر: {item.price}</span>
                   <span>تفاصيل إضافية: {item.additionalDetails}</span>
                 </div>
