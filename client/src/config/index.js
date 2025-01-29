@@ -280,6 +280,8 @@ export const addressFormControls = [
     componentType: "input",
     type: "text",
     placeholder: "Enter your phone number",
+    dir: "ltr",
+    inputMode: "numeric",
   },
   {
     label: "Could you please send me the address details",

@@ -173,7 +173,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
       ...(availableSizes.length > 0 && { size: selectedSize }), // تضمين الحجم فقط إذا كان متاحًا
-    };    
+    };
     console.log("cartItem", cartItem);
     // Dispatch action to add the product to cart
     dispatch(addToCart(cartItem)).then((data) => {
@@ -399,25 +399,24 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             )}
           </div>
           {availableSizes.length > 0 && (
-  <div className='mt-1' >
-    <label htmlFor="size" className="block font-bold">
-      Choose Size:
-    </label>
-    <select
-      id="size"
-      value={selectedSize}
-      onChange={handleSizeChange}
-      className="border rounded p-2 w-full"
-    >
-      {availableSizes.map((size, index) => (
-        <option key={index} value={size}>
-          {size.toUpperCase()}
-        </option>
-      ))}
-    </select>
-  </div>
-)}
-
+            <div className="mt-1">
+              <label htmlFor="size" className="block font-bold">
+                Choose Size:
+              </label>
+              <select
+                id="size"
+                value={selectedSize}
+                onChange={handleSizeChange}
+                className="border rounded p-2 w-full"
+              >
+                {availableSizes.map((size, index) => (
+                  <option key={index} value={size}>
+                    {size.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="mt-1">
             <Label>Quantity</Label>

@@ -164,8 +164,6 @@
 
 // export default Address;
 
-
-
 // import { useEffect, useState } from "react";
 // import CommonForm from "../common/form";
 // import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -337,9 +335,6 @@
 
 // export default Address;
 
-
-
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { addressFormControls } from "@/config";
@@ -404,16 +399,47 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
                 {control.label}
               </label>
               {control.componentType === "input" ? (
+                // <input
+                //   type={control.type || "text"}
+                //   id={control.name}
+                //   name={control.name}
+                //   value={formData[control.name]}
+                //   onChange={(e) =>
+                //     setFormData({ ...formData, [control.name]: e.target.value })
+                //   }
+                //   placeholder={control.placeholder}
+                //   className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                // />
                 <input
                   type={control.type || "text"}
                   id={control.name}
                   name={control.name}
                   value={formData[control.name]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, [control.name]: e.target.value })
-                  }
+                  onChange={(e) => {
+                    let value = e.target.value;
+
+                    if (control.name === "phone") {
+                      value = value.replace(/\D/g, ""); // حذف أي شيء غير الأرقام
+                    }
+
+                    setFormData((prev) => ({ ...prev, [control.name]: value }));
+                  }}
+                  onPaste={(e) => {
+                    if (control.name === "phone") {
+                      e.preventDefault();
+                      let pastedText = e.clipboardData
+                        .getData("text")
+                        .replace(/\D/g, "");
+                      setFormData((prev) => ({
+                        ...prev,
+                        [control.name]: pastedText,
+                      }));
+                    }
+                  }}
                   placeholder={control.placeholder}
                   className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  dir={control.name === "phone" ? "ltr" : "auto"} // خلي الاتجاه LTR بس للرقم
+                  inputMode={control.name === "phone" ? "numeric" : "text"} // الإدخال للأرقام فقط في الهاتف
                 />
               ) : control.componentType === "textarea" ? (
                 <textarea
