@@ -284,6 +284,13 @@ export const addressFormControls = [
     inputMode: "numeric",
   },
   {
+    label: "Email",
+    name: "email",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter your Email",
+  },
+  {
     label: "Could you please send me the address details",
     name: "notes",
     componentType: "textarea",

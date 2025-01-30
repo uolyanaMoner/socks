@@ -29,6 +29,7 @@ function AddressCard({
         <Label>Address: {addressInfo?.address}</Label>
         {/* <Label>City: {addressInfo?.city}</Label> */}
         <Label>Phone: {addressInfo?.phone}</Label>
+        <Label>Email: {addressInfo?.email}</Label>
         <Label>Details: {addressInfo?.notes}</Label>
       </CardContent>
       <CardFooter className="p-3 flex justify-between">

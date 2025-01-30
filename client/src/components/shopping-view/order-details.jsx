@@ -75,6 +75,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
               <span>Address : {orderDetails?.addressInfo?.address}</span>
               <span>City : {orderDetails?.addressInfo?.city}</span>
               <span>Phone : {orderDetails?.addressInfo?.phone}</span>
+              <span>Email : {orderDetails?.addressInfo?.email}</span>
               <span>Details : {orderDetails?.addressInfo?.notes}</span>
             </div>
           </div>

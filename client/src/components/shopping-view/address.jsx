@@ -346,6 +346,7 @@ const initialAddressFormData = {
   fullName: "",
   address: "",
   phone: "",
+  email:"",
   notes: "",
 };
 

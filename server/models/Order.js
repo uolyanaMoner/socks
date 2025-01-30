@@ -67,6 +67,7 @@ const OrderSchema = new mongoose.Schema({
     city: String,
     phone: String,
     notes: String,
+    email: String,
   },
   orderStatus: String,
   paymentMethod: String,

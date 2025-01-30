@@ -482,6 +482,7 @@ function AdminOrderDetailsView() {
             <span>العنوان: {orderDetails?.addressInfo?.address}</span>
             <span>المدينة: {orderDetails?.addressInfo?.city}</span>
             <span>الهاتف: {orderDetails?.addressInfo?.phone}</span>
+            <span>البريد الالكتروني: {orderDetails?.addressInfo?.email}</span>
             <span>تفاصيل: {orderDetails?.addressInfo?.notes}</span>
           </div>
         </div>
