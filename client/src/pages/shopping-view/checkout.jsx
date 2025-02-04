@@ -283,9 +283,147 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
     }
   };
 
+  // const handlePayment = async (method) => {
+
+
+  //   if (cartItems.length === 0) {
+  //     toast({
+  //       title: "Your cart is empty. Please add items to proceed",
+  //       variant: "destructive",
+  //       style: {
+  //         position: "fixed",
+  //         left: "50%",
+  //         transform: "translateX(-50%)",
+  //         bottom:  "20px" , // أسفل الصفحة عند الموبايل
+  //       },
+  //     });
+  //     return;
+  //   }
+
+  //   if (currentSelectedAddress === null) {
+  //     toast({
+  //       title: "Please select one address to proceed.",
+  //       variant: "destructive",
+  //       style: {
+  //         position: "fixed",
+  //         left: "50%",
+  //         transform: "translateX(-50%)",
+  //         bottom:  "20px" , // أسفل الصفحة عند الموبايل
+  //       },
+  //     });
+  //     return;
+  //   }
+
+  //   if (!government) {
+  //     toast({
+  //       title: "Please select your government to proceed.",
+  //       variant: "destructive",
+  //       style: {
+  //         position: "fixed",
+  //         left: "50%",
+  //         transform: "translateX(-50%)",
+  //         bottom:  "20px" , // أسفل الصفحة عند الموبايل
+  //       },
+  //     });
+  //     return;
+  //   }
+
+  //   const billingData = {
+  //     first_name: user?.userName || "N/A",
+  //     last_name: "..",
+  //     email: user?.email,
+  //     phone_number: currentSelectedAddress?.phone,
+  //     country: "EG",
+  //     city: currentSelectedAddress?.city,
+  //     street: currentSelectedAddress?.address,
+  //     building: currentSelectedAddress?.building || "N/A",
+  //     postalCode: currentSelectedAddress?.postalCode || "00000",
+  //     floor: currentSelectedAddress?.floor || "N/A",
+  //     apartment: currentSelectedAddress?.apartment || "N/A",
+  //   };
+
+  //   const orderData = {
+  //     userId: userId,
+  //     cartId: cartItems?._id,
+  //     cartItems: cartItems.items.map((singleCartItem) => ({
+  //       productId: singleCartItem?.productId,
+  //       title: singleCartItem?.title,
+  //       image: singleCartItem?.image,
+  //       color: singleCartItem?.color,
+  //       size: singleCartItem?.size,
+  //       additionalDetails: singleCartItem?.additionalDetails,
+  //       price:
+  //         singleCartItem?.salePrice > 0
+  //           ? singleCartItem?.salePrice
+  //           : singleCartItem?.price,
+  //       quantity: singleCartItem?.quantity,
+  //     })),
+  //     addressInfo: {
+  //       addressId: currentSelectedAddress?._id,
+  //       address: currentSelectedAddress?.address,
+  //       city: government,
+  //       phone: currentSelectedAddress?.phone,
+  //       fullName:currentSelectedAddress?.fullName,
+  //       email: currentSelectedAddress?.email,
+  //       notes: currentSelectedAddress?.notes,
+  //       apartment: currentSelectedAddress?.apartment || "N/A",
+  //       floor: currentSelectedAddress?.floor || "N/A",
+  //       building: currentSelectedAddress?.building || "N/A",
+  //       postalCode: currentSelectedAddress?.postalCode || "00000",
+  //     },
+  //     orderStatus: "pending",
+  //     paymentMethod: "COD",
+  //     paymentStatus: "pending",
+  //     totalAmount: totalCartAmount,
+  //     orderDate: new Date(),
+  //     orderUpdateDate: new Date(),
+  //   };
+
+  //   const response = await fetch(
+  //     `${import.meta.env.VITE_API_URL}/api/shop/order/create`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         amount: totalCartAmount,
+  //         billingData,
+  //         orderData,
+  //         paymentMethod: method,
+  //       }),
+  //     }
+  //   );
+
+  //   const result = await response.json();
+  //   console.log("Server Response: ", result);
+
+  //   if (method === "cod") {
+  //     if (result?.success) {
+  //       // حفظ orderId في sessionStorage
+  //       sessionStorage.setItem("currentOrderId", result?.orderId);
+  //       sessionStorage.setItem("paymentMethod", "cod"); // إذا كانت الطريقة هي الدفع عند الاستلام
+
+  //       // الانتقال إلى paymob-return بعد حفظ الـ orderId
+  //       // window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
+  //       navigate("/shop/paymob-return");
+  //     } else {
+  //       toast({
+  //         title: "Failed to create order. Try again.",
+  //         variant: "destructive",
+  //         style: {
+  //           position: "fixed",
+  //           left: "50%",
+  //           transform: "translateX(-50%)",
+  //           bottom:  "20px" , // أسفل الصفحة عند الموبايل
+  //         },
+  //       });
+  //     }
+  //   }
+  // };
+
+
   const handlePayment = async (method) => {
-
-
     if (cartItems.length === 0) {
       toast({
         title: "Your cart is empty. Please add items to proceed",
@@ -294,12 +432,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          bottom:  "20px",
         },
       });
       return;
     }
-
+  
     if (currentSelectedAddress === null) {
       toast({
         title: "Please select one address to proceed.",
@@ -308,12 +446,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          bottom:  "20px",
         },
       });
       return;
     }
-
+  
     if (!government) {
       toast({
         title: "Please select your government to proceed.",
@@ -322,12 +460,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          bottom:  "20px",
         },
       });
       return;
     }
-
+  
     const billingData = {
       first_name: user?.userName || "N/A",
       last_name: "..",
@@ -341,7 +479,7 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       floor: currentSelectedAddress?.floor || "N/A",
       apartment: currentSelectedAddress?.apartment || "N/A",
     };
-
+  
     const orderData = {
       userId: userId,
       cartId: cartItems?._id,
@@ -349,7 +487,7 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         productId: singleCartItem?.productId,
         title: singleCartItem?.title,
         image: singleCartItem?.image,
-        color: singleCartItem?.color,
+        color: singleCartItem?.color || localStorage.getItem(`selectedColor-${singleCartItem.productId}`), // استخدام اللون المختار
         size: singleCartItem?.size,
         additionalDetails: singleCartItem?.additionalDetails,
         price:
@@ -363,7 +501,7 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         address: currentSelectedAddress?.address,
         city: government,
         phone: currentSelectedAddress?.phone,
-        fullName:currentSelectedAddress?.fullName,
+        fullName: currentSelectedAddress?.fullName,
         email: currentSelectedAddress?.email,
         notes: currentSelectedAddress?.notes,
         apartment: currentSelectedAddress?.apartment || "N/A",
@@ -372,13 +510,13 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         postalCode: currentSelectedAddress?.postalCode || "00000",
       },
       orderStatus: "pending",
-      paymentMethod: "COD",
+      paymentMethod: method,
       paymentStatus: "pending",
       totalAmount: totalCartAmount,
       orderDate: new Date(),
       orderUpdateDate: new Date(),
     };
-
+  
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/shop/order/create`,
       {
@@ -394,18 +532,16 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         }),
       }
     );
-
+  
     const result = await response.json();
     console.log("Server Response: ", result);
-
+  
     if (method === "cod") {
       if (result?.success) {
         // حفظ orderId في sessionStorage
         sessionStorage.setItem("currentOrderId", result?.orderId);
-        sessionStorage.setItem("paymentMethod", "cod"); // إذا كانت الطريقة هي الدفع عند الاستلام
-
-        // الانتقال إلى paymob-return بعد حفظ الـ orderId
-        // window.location.href = `${import.meta.env.VITE_API_URL}/shop/paymob-return`;
+        sessionStorage.setItem("paymentMethod", "cod");
+  
         navigate("/shop/paymob-return");
       } else {
         toast({
@@ -415,12 +551,14 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
             position: "fixed",
             left: "50%",
             transform: "translateX(-50%)",
-            bottom:  "20px" , // أسفل الصفحة عند الموبايل
+            bottom:  "20px",
           },
         });
       }
     }
   };
+  
+
 
   return (
     <div className="flex flex-col">

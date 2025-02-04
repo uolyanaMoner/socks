@@ -89,6 +89,21 @@ export const clearCart = createAsyncThunk(
   }
 );
 
+export const updateCartColor = createAsyncThunk(
+  "cart/updateCartColor",
+  async ({ userId, productId, color }) => {
+    const response = await axios.put(
+      `${import.meta.env.VITE_API_URL}/api/shop/cart/update-color`,
+      {
+        userId,
+        productId,
+        color,
+      }
+    );
+    return response.data;
+  }
+);
+
 
 
 
@@ -151,7 +166,17 @@ const shoppingCartSlice = createSlice({
       .addCase(clearCart.rejected, (state) => {
         state.isLoading = false;
         state.cartItems = [];
-      });
+      }) .addCase(updateCartColor.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateCartColor.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.cartItems = action.payload.data;
+      })
+      .addCase(updateCartColor.rejected, (state) => {
+        state.isLoading = false;
+        state.cartItems = [];
+      })
   },
 });
 
