@@ -1,4 +1,11 @@
-import { StarIcon } from "lucide-react";
+import {
+  Award,
+  CloudLightning,
+  Earth,
+  ShieldCheck,
+  ShirtIcon,
+  StarIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
@@ -15,6 +22,7 @@ import { addReview, getReviews } from "@/store/shop/review-slice";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { Card, CardContent } from "../ui/card";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [reviewMsg, setReviewMsg] = useState("");
@@ -33,10 +41,55 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [isLaptop, setIsLaptop] = useState(false);
   const [availableSizes, setAvailableSizes] = useState([]);
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
-  const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
+  const handleQuantityChange = (quantity) => {
+    setSelectedQuantity(quantity); // تحديث الكمية التي تم اختيارها
+    // هنا يمكن أيضًا تحديث الكارت إذا كنت بحاجة إلى إضافة الكمية المختارة إليه
   };
+
+  const getDiscountedPrice = (quantity) => {
+    return (
+      productDetails?.quantityPrices?.find((item) => item.quantity === quantity)
+        ?.price || productDetails?.price
+    );
+  };
+
+  const getOriginalPrice = (quantity) => {
+    return productDetails?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    )?.originalPrice;
+  };
+
+  const getDiscountLabel = (quantity) => {
+    return productDetails?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    )?.discountLabel;
+  };
+
+  const getOfferLabel = (quantity) => {
+    return productDetails?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    )?.offerLabel;
+  };
+
+  const getPricePerItem = (quantity) => {
+    return (
+      productDetails?.quantityPrices?.find((item) => item.quantity === quantity)
+        ?.pricePerItem || (getDiscountedPrice(quantity) / quantity).toFixed(2)
+    );
+  };
+
+ 
+  const handleColorChange = (color) => {
+    setSelectedColor(color); // تغيير اللون المختار عند النقر على أحد الأزرار
+  };
+
+
+
+  // const handleQuantityChange = (event) => {
+  //   setQuantity(parseInt(event.target.value));
+  // };
 
   function handleRatingChange(getRating) {
     console.log(getRating, "getRating");
@@ -44,10 +97,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     setRating(getRating);
   }
 
-  const handleColorChange = (event) => {
-    const newColor = event.target.value;
-    setSelectedColor(newColor);
+  const handleSizeChange = (size) => {
+    setSelectedSize(size); // تحديث الحالة لاختيار المقاس
   };
+
+  // const handleColorChange = (event) => {
+  //   const newColor = event.target.value;
+  //   setSelectedColor(newColor);
+  // };
 
   const handleAdditionalDetailsChange = (event) => {
     setAdditionalDetails(event.target.value); // تحديث النص عند الكتابة
@@ -83,10 +140,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       setSelectedSize(sizes[0]); // اختيار الحجم الأول تلقائيًا
     }
   }, [productDetails?.size]);
-
-  const handleSizeChange = (event) => {
-    setSelectedSize(event.target.value);
-  };
 
   // function handleAddToCart(getCurrentProductId, getTotalStock) {
   //   // if (quantity > getTotalStock) {
@@ -168,7 +221,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     const cartItem = {
       userId,
       productId: getCurrentProductId,
-      quantity,
+      quantity: selectedQuantity ,
       price: selectedPrice,
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
@@ -250,14 +303,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     autoplaySpeed: 3000,
   };
 
-  const getDiscountedPrice = (quantity) => {
-    // هنا بتختار السعر بناءً على الكمية من quantityPrices
-    const price = productDetails?.quantityPrices?.find(
-      (item) => item.quantity === quantity
-    )?.price;
+  // const getDiscountedPrice = (quantity) => {
+  //   // هنا بتختار السعر بناءً على الكمية من quantityPrices
+  //   const price = productDetails?.quantityPrices?.find(
+  //     (item) => item.quantity === quantity
+  //   )?.price;
 
-    return price || productDetails?.price; // لو مفيش سعر محدد للكمية هيرجع السعر الأصلي
-  };
+  //   return price || productDetails?.price; // لو مفيش سعر محدد للكمية هيرجع السعر الأصلي
+  // };
 
   const getDescription = () => {
     if (!productDetails?.description) return "";
@@ -296,6 +349,13 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     return null;
   }
 
+  const categoriesWithIcon = [
+    { id: "quality", label: "جودة عالية", icon: Award },
+    { id: "safe", label: "آمن الاستعمال", icon: ShieldCheck },
+    { id: "friend", label: "صديق للبيئة", icon: Earth },
+    { id: "best", label: "الأفضل في السوق", icon: Award },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 lg:max-h-[780px] max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -325,7 +385,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             />
           )}
         </div>
-        <div className="">
+        <div className="overflow-y-auto max-h-[500px]">
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
             <p
@@ -357,7 +417,39 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               </Button>
             )}
           </div>
-          <div className="flex items-center justify-between">
+
+          {/* <section className="mb-4 bg-blue-50 rounded-xl py-4">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-4 gap-4 items-center text-center">
+                {categoriesWithIcon.map((categoryItem, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <categoryItem.icon className="w-8 h-8 text-gray-700" />
+                    <span className="font-medium text-sm text-gray-700 mt-2">
+                      {categoryItem.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section> */}
+
+          <div className="grid grid-cols-2 gap-6 mb-3">
+            {categoriesWithIcon.map((categoryItem) => (
+              <Card
+                onClick={() =>
+                  handleNavigateToListingPage(categoryItem, "category")
+                }
+                className="hover:shadow-lg transition-shadow"
+              >
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <categoryItem.icon className="w-6 h-6 mb-2 text-primary" />
+                  <span className="font-bold">{categoryItem.label}</span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* <div className="flex items-center justify-between">
             <p
               className={`text-3xl font-bold text-primary ${
                 productDetails?.salePrice > 0 && quantity === 1
@@ -376,8 +468,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 {productDetails?.salePrice} EGP
               </p>
             )}
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <label htmlFor="color" className="block font-bold">
               Choose Color:
             </label>
@@ -397,7 +489,73 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             ) : (
               <p className="text-red-500">No colors available</p>
             )}
+          </div> */}
+
+          <div>
+            <label htmlFor="color" className="block font-bold">
+              Choose Color:
+            </label>
+            {availableColors.length > 0 ? (
+              <div className="flex gap-3 mt-2">
+                {availableColors.map((color, index) => (
+                  <div key={index} className="relative group">
+                    {/* الزر الدائري مع اللون */}
+                    <button
+                      type="button"
+                      className={`w-8 h-8 rounded-full border-2 border-gray-300 ${
+                        selectedColor === color
+                          ? `border-${color} ring-2 ring-${color}`
+                          : "bg-gray-200"
+                      }`}
+                      style={{
+                        backgroundColor:
+                          color === "black&white"
+                            ? "transparent" // إذا كان اللون black&white نتركه شفاف
+                            : color, // إذا كان لون آخر نعرضه بشكل طبيعي
+                        backgroundImage:
+                          color === "black&white"
+                            ? "linear-gradient(135deg, #000000 50%, #FFFFFF 50%)" // تقسيم نصف دايرتين إلى أسود وأبيض
+                            : "", // إذا كان اللون غير black&white لا نستخدم التدرج
+                      }}
+                      onClick={() => handleColorChange(color)} // تغيير اللون عند النقر
+                      aria-label={`Select ${color}`}
+                    >
+                      {/* عرض العلامة عند التحديد */}
+                      {selectedColor === color && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </span>
+                      )}
+                    </button>
+                    {/* اسم اللون يظهر عند التمرير */}
+                    <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {color === "black&white"
+                        ? "Black & White"
+                        : color.charAt(0).toUpperCase() + color.slice(1)}{" "}
+                      {/* اسم اللون */}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-red-500 mt-2">No colors available</p>
+            )}
           </div>
+
+          {/* 
           {availableSizes.length > 0 && (
             <div className="mt-1">
               <label htmlFor="size" className="block font-bold">
@@ -416,8 +574,33 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 ))}
               </select>
             </div>
+          )} */}
+
+          {availableSizes.length > 0 && (
+            <div className="mt-4">
+              <label htmlFor="size" className="block font-bold">
+                Choose Size:
+              </label>
+              <div className="flex gap-3 mt-2">
+                {availableSizes.map((size, index) => (
+                  <button
+                    key={index}
+                    className={`px-4 py-2 rounded-full border-2 text-sm font-semibold transition duration-300 ${
+                      selectedSize === size
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-gray-200 text-gray-700 border-gray-300 hover:bg-blue-100"
+                    }`}
+                    onClick={() => handleSizeChange(size)} // تغيير الحجم عند النقر
+                    aria-label={`Select ${size}`}
+                  >
+                    {size.toUpperCase()} {/* عرض الحجم */}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
+          {/* 
           <div className="mt-1">
             <Label>Quantity</Label>
             <select
@@ -425,8 +608,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               onChange={handleQuantityChange}
               className="w-full p-2 border border-gray-300 rounded"
             >
-              {/* إضافة خيار الكمية 1 كخيار ثابت */}
-              <option value={1}>1</option>
+              إضافة خيار الكمية 1 كخيار ثابت
+           <option value={1}>1</option>
 
               {productDetails?.quantityPrices?.map((item, index) => (
                 <option key={index} value={item.quantity}>
@@ -434,7 +617,90 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 </option>
               ))}
             </select>
+          </div> */}
+
+<div className="mt-4 space-y-3">
+  {(() => {
+    const quantityPrices = productDetails?.quantityPrices?.slice().sort((a, b) => a.quantity - b.quantity);
+
+    // حساب أقل سعر للشراب الواحد بين كل الكميات
+    const minPricePerItem = Math.min(
+      ...quantityPrices.map((i) => getPricePerItem(i.quantity))
+    );
+
+    return quantityPrices.map((item, index) => {
+      const pricePerItem = getPricePerItem(item.quantity);
+
+      // تحديد البادجات
+      const isBestSaving = pricePerItem == minPricePerItem; // الأكثر توفيرًا
+      const filteredArray = quantityPrices.filter((i) => i.quantity !== 1);
+      const isMostPopular =
+        item.quantity ===
+        Math.max(...filteredArray.map((i) => i.quantity)); // الأكثر طلبًا
+
+      return (
+        <div
+          key={index}
+          className={`border rounded-lg p-4 relative cursor-pointer transition duration-300 hover:shadow-lg hover:border-blue-400 ${
+            selectedQuantity === item.quantity
+              ? "border-blue-500 shadow-md"
+              : "border-gray-300"
+          }`}
+          onClick={() => handleQuantityChange(item.quantity)}
+        >
+          <div className="absolute -top-3 left-2 flex gap-2">
+            {isMostPopular && (
+              <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                الأكثر طلباً
+              </div>
+            )}
+            {isBestSaving && (
+              <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                الأكثر توفيراً
+              </div>
+            )}
           </div>
+
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-gray-800 font-semibold text-lg">
+              {`أشتري ${item.quantity} شراب`}
+            </div>
+            <input
+              type="radio"
+              checked={selectedQuantity === item.quantity}
+              readOnly
+              className="form-radio text-blue-500 w-5 h-5"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <p className="text-2xl font-bold text-primary">
+              {getDiscountedPrice(item.quantity)} ج.م
+            </p>
+            {getOriginalPrice(item.quantity) && (
+              <p className="text-lg line-through text-gray-400">
+                {getOriginalPrice(item.quantity)} ج.م
+              </p>
+            )}
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
+            {`سعر الشراب الواحد: ${pricePerItem} ج.م`}
+          </p>
+
+          {getDiscountLabel(item.quantity) && (
+            <div className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded mt-1 inline-block">
+              {getDiscountLabel(item.quantity)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  })()}
+</div>
+
+
+
           {/* Text area for additional input */}
           {(selectedColor === "black&white" ||
             selectedColor === "white&black") &&
