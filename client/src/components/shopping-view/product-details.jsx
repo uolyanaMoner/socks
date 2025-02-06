@@ -5,6 +5,8 @@ import {
   ShieldCheck,
   ShirtIcon,
   StarIcon,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -42,6 +44,52 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [availableSizes, setAvailableSizes] = useState([]);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [showMessage, setShowMessage] = useState(false);
+
+  //for size
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleSizeGuide = () => {
+    setIsOpen(!isOpen);
+  };
+
+  //for delivery
+  const [openSection, setOpenSection] = useState(null);
+
+  const handleToggle = (section) => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
+  const sections = [
+    {
+      id: "delivery",
+      title: "التوصيل",
+      content: "التوصيل من يومين ل 4 ايام كحد اقصى علي حسب مكانك",
+    },
+    {
+      id: "return",
+      title: "سياسة الاستبدال و الاسترجاع",
+      content:
+        "الاسترجاع متاح في وجود المندوب فقط و مسموح بفتح الاوردر ولا يوجد استرجاع بعد مغادرة مندوب الشحن و لو كنت غير متواجد عند التسليم يوجد استرجاع مع دفع ثمن الشحن في حالة وجود خطا في المنتج او عيوب صناعة",
+    },
+    {
+      id: "warranty",
+      title: "الضمان",
+      content:
+        "تقدر تستعمل الشرابات 30 يوم لو فيها حاجة في عيوب التصنيع تقدر تسترجعها",
+    },
+  ];
+
+  // التحقق من حالة التبديل عند تحميل المكون
+  useEffect(() => {
+    const storedValue = JSON.parse(
+      localStorage.getItem(`showMessage-${productDetails?._id}`)
+    );
+    if (storedValue) {
+      setShowMessage(true); // إذا كانت القيمة true، عرض الرسالة
+    } else {
+      setShowMessage(false);
+    }
+  }, [productDetails?._id]); // يعتمد على productId لتحديث الحالة عند تغييره
 
   const handleQuantityChange = (quantity) => {
     setSelectedQuantity(quantity); // تحديث الكمية التي تم اختيارها
@@ -80,12 +128,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     );
   };
 
- 
   const handleColorChange = (color) => {
     setSelectedColor(color); // تغيير اللون المختار عند النقر على أحد الأزرار
   };
-
-
 
   // const handleQuantityChange = (event) => {
   //   setQuantity(parseInt(event.target.value));
@@ -221,7 +266,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     const cartItem = {
       userId,
       productId: getCurrentProductId,
-      quantity: selectedQuantity ,
+      quantity: selectedQuantity,
       price: selectedPrice,
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
@@ -350,10 +395,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   }
 
   const categoriesWithIcon = [
-    { id: "quality", label: "جودة عالية", icon: Award },
-    { id: "safe", label: "آمن الاستعمال", icon: ShieldCheck },
-    { id: "friend", label: "صديق للبيئة", icon: Earth },
-    { id: "best", label: "الأفضل في السوق", icon: Award },
+    { id: "quality", label: "High quality", icon: Award },
+    { id: "safe", label: "Safe to use", icon: ShieldCheck },
+    { id: "friend", label: "Eco-friendly", icon: Earth },
+    { id: "best", label: "Best in the market", icon: Award },
   ];
 
   return (
@@ -433,7 +478,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </div>
           </section> */}
 
-          <div className="grid grid-cols-2 gap-6 mb-3">
+          <div className="grid grid-cols-2 gap-4 mb-3">
             {categoriesWithIcon.map((categoryItem) => (
               <Card
                 onClick={() =>
@@ -490,12 +535,11 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               <p className="text-red-500">No colors available</p>
             )}
           </div> */}
-
-          <div>
-            <label htmlFor="color" className="block font-bold">
-              Choose Color:
-            </label>
-            {availableColors.length > 0 ? (
+          {availableColors.length > 0 && (
+            <div>
+              <label htmlFor="color" className="block font-bold">
+                Choose Color:
+              </label>
               <div className="flex gap-3 mt-2">
                 {availableColors.map((color, index) => (
                   <div key={index} className="relative group">
@@ -550,11 +594,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-red-500 mt-2">No colors available</p>
-            )}
-          </div>
-
+            </div>
+          )}
           {/* 
           {availableSizes.length > 0 && (
             <div className="mt-1">
@@ -600,6 +641,40 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </div>
           )}
 
+          <div>
+            {showMessage && (
+              <div className="max-w-xs mx-auto mb-1 mt-4 mb-4 ">
+                <button
+                  onClick={toggleSizeGuide}
+                  className="w-full flex items-center justify-between text-left text-xl font-semibold mb-4"
+                >
+                  <span>Size Guide</span>
+                  {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+
+                {isOpen && (
+                  <ul className="space-y-2">
+                    {[
+                      { size: "M", details: "60-70 kg / 29-31 in jeans" },
+                      { size: "L", details: "70-90 kg / 32-35 in jeans" },
+                      { size: "XL", details: "90-110 kg / 36-38 in jeans" },
+                      { size: "2XL", details: "110-130 kg / 39-44 in jeans" },
+                    ].map((item) => (
+                      <li
+                        key={item.size}
+                        className="flex justify-between p-2 border-b border-gray-300"
+                      >
+                        <span className="font-semibold">{item.size}</span>
+                        <span className="text-gray-600">{item.details}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+          <Separator />
+
           {/* 
           <div className="mt-1">
             <Label>Quantity</Label>
@@ -619,87 +694,87 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </select>
           </div> */}
 
-<div className="mt-4 space-y-3">
-  {(() => {
-    const quantityPrices = productDetails?.quantityPrices?.slice().sort((a, b) => a.quantity - b.quantity);
+          <div className="mt-1 space-y-3">
+            {(() => {
+              const quantityPrices = productDetails?.quantityPrices
+                ?.slice()
+                .sort((a, b) => a.quantity - b.quantity);
 
-    // حساب أقل سعر للشراب الواحد بين كل الكميات
-    const minPricePerItem = Math.min(
-      ...quantityPrices.map((i) => getPricePerItem(i.quantity))
-    );
+              const minPricePerItem = Math.min(
+                ...quantityPrices.map((i) => getPricePerItem(i.quantity))
+              );
 
-    return quantityPrices.map((item, index) => {
-      const pricePerItem = getPricePerItem(item.quantity);
+              return quantityPrices.map((item, index) => {
+                const pricePerItem = getPricePerItem(item.quantity);
 
-      // تحديد البادجات
-      const isBestSaving = pricePerItem == minPricePerItem; // الأكثر توفيرًا
-      const filteredArray = quantityPrices.filter((i) => i.quantity !== 1);
-      const isMostPopular =
-        item.quantity ===
-        Math.max(...filteredArray.map((i) => i.quantity)); // الأكثر طلبًا
+                const isBestSaving = pricePerItem == minPricePerItem;
+                const filteredArray = quantityPrices.filter(
+                  (i) => i.quantity !== 1
+                );
+                const isMostPopular =
+                  item.quantity ===
+                  Math.max(...filteredArray.map((i) => i.quantity));
 
-      return (
-        <div
-          key={index}
-          className={`border rounded-lg p-4 relative cursor-pointer transition duration-300 hover:shadow-lg hover:border-blue-400 ${
-            selectedQuantity === item.quantity
-              ? "border-blue-500 shadow-md"
-              : "border-gray-300"
-          }`}
-          onClick={() => handleQuantityChange(item.quantity)}
-        >
-          <div className="absolute -top-3 left-2 flex gap-2">
-            {isMostPopular && (
-              <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
-                الأكثر طلباً
-              </div>
-            )}
-            {isBestSaving && (
-              <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
-                الأكثر توفيراً
-              </div>
-            )}
+                return (
+                  <div
+                    key={index}
+                    className={`border rounded-lg p-4 relative cursor-pointer transition duration-300 hover:shadow-lg hover:border-blue-400 ${
+                      selectedQuantity === item.quantity
+                        ? "border-blue-500 shadow-md"
+                        : "border-gray-300"
+                    }`}
+                    onClick={() => handleQuantityChange(item.quantity)}
+                  >
+                    <div className="absolute -top-3 left-2 flex gap-2">
+                      {isMostPopular && (
+                        <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                          Most Popular
+                        </div>
+                      )}
+                      {isBestSaving && (
+                        <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                          Best Saving
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-gray-800 font-semibold text-lg">
+                        {`Buy ${item.quantity}`}
+                      </div>
+                      <input
+                        type="radio"
+                        checked={selectedQuantity === item.quantity}
+                        readOnly
+                        className="form-radio text-blue-500 w-5 h-5"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-2xl font-bold text-primary">
+                        {getDiscountedPrice(item.quantity)} EGP
+                      </p>
+                      {getOriginalPrice(item.quantity) && (
+                        <p className="text-lg line-through text-gray-400">
+                          {getOriginalPrice(item.quantity)} EGP
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
+                      {`Price per item: ${pricePerItem} EGP`}
+                    </p>
+
+                    {getDiscountLabel(item.quantity) && (
+                      <div className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded mt-1 inline-block">
+                        {getDiscountLabel(item.quantity)}
+                      </div>
+                    )}
+                  </div>
+                );
+              });
+            })()}
           </div>
-
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-gray-800 font-semibold text-lg">
-              {`أشتري ${item.quantity} شراب`}
-            </div>
-            <input
-              type="radio"
-              checked={selectedQuantity === item.quantity}
-              readOnly
-              className="form-radio text-blue-500 w-5 h-5"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <p className="text-2xl font-bold text-primary">
-              {getDiscountedPrice(item.quantity)} ج.م
-            </p>
-            {getOriginalPrice(item.quantity) && (
-              <p className="text-lg line-through text-gray-400">
-                {getOriginalPrice(item.quantity)} ج.م
-              </p>
-            )}
-          </div>
-
-          <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
-            {`سعر الشراب الواحد: ${pricePerItem} ج.م`}
-          </p>
-
-          {getDiscountLabel(item.quantity) && (
-            <div className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded mt-1 inline-block">
-              {getDiscountLabel(item.quantity)}
-            </div>
-          )}
-        </div>
-      );
-    });
-  })()}
-</div>
-
-
 
           {/* Text area for additional input */}
           {(selectedColor === "black&white" ||
@@ -738,6 +813,27 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </Button>
           </div>
           <Separator />
+          <div className="space-y-4 text-right">
+            {sections.map(({ id, title, content }) => (
+              <div key={id} className="border rounded-lg p-4">
+                <div
+                  className="flex items-center  text-right justify-between cursor-pointer"
+                  onClick={() => handleToggle(id)}
+                >
+                  <h3 className="font-semibold  text-right text-lg">{title}</h3>
+                  {openSection === id ? (
+                    <ChevronUp size={20} />
+                  ) : (
+                    <ChevronDown size={20} />
+                  )}
+                </div>
+                {openSection === id && (
+                  <p className="mt-2 text-gray-600">{content}</p>
+                )}
+              </div>
+            ))}
+          </div>
+
           {/* <div>
             {/* <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>

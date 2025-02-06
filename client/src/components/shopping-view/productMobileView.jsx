@@ -14,7 +14,14 @@ import {
 } from "@/store/shop/products-slice";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
-import { Award, Earth, Share2, ShieldCheck } from "lucide-react";
+import {
+  Award,
+  Earth,
+  Share2,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 
 function MobileView() {
@@ -42,6 +49,53 @@ function MobileView() {
   const [selectedSize, setSelectedSize] = useState("");
 
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  const [showMessage, setShowMessage] = useState(false);
+
+  //for size
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleSizeGuide = () => {
+    setIsOpen(!isOpen);
+  };
+
+  //for delivery
+  const [openSection, setOpenSection] = useState(null);
+
+  const handleToggle = (section) => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
+  const sections = [
+    {
+      id: "delivery",
+      title: "التوصيل",
+      content: "التوصيل من يومين ل 4 ايام كحد اقصى علي حسب مكانك",
+    },
+    {
+      id: "return",
+      title: "سياسة الاستبدال و الاسترجاع",
+      content:
+        "الاسترجاع متاح في وجود المندوب فقط و مسموح بفتح الاوردر ولا يوجد استرجاع بعد مغادرة مندوب الشحن و لو كنت غير متواجد عند التسليم يوجد استرجاع مع دفع ثمن الشحن في حالة وجود خطا في المنتج او عيوب صناعة",
+    },
+    {
+      id: "warranty",
+      title: "الضمان",
+      content:
+        "تقدر تستعمل الشرابات 30 يوم لو فيها حاجة في عيوب التصنيع تقدر تسترجعها",
+    },
+  ];
+
+  // التحقق من حالة التبديل عند تحميل المكون
+  useEffect(() => {
+    const storedValue = JSON.parse(
+      localStorage.getItem(`showMessage-${productDetails?._id}`)
+    );
+    if (storedValue) {
+      setShowMessage(true); // إذا كانت القيمة true، عرض الرسالة
+    } else {
+      setShowMessage(false);
+    }
+  }, [productDetails?._id]); // يعتمد على productId لتحديث الحالة عند تغييره
 
   const handleQuantityChange = (quantity) => {
     setSelectedQuantity(quantity);
@@ -211,7 +265,7 @@ function MobileView() {
     const cartItem = {
       userId,
       productId: getCurrentProductId,
-      quantity: selectedQuantity ,
+      quantity: selectedQuantity,
       price: price,
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
@@ -261,10 +315,10 @@ function MobileView() {
   };
 
   const categoriesWithIcon = [
-    { id: "quality", label: "جودة عالية", icon: Award },
-    { id: "safe", label: "آمن الاستعمال", icon: ShieldCheck },
-    { id: "friend", label: "صديق للبيئة", icon: Earth },
-    { id: "best", label: "الأفضل في السوق", icon: Award },
+    { id: "quality", label: "High quality", icon: Award },
+    { id: "safe", label: "Safe to use", icon: ShieldCheck },
+    { id: "friend", label: "Eco-friendly", icon: Earth },
+    { id: "best", label: "Best in the market", icon: Award },
   ];
 
   return (
@@ -345,85 +399,83 @@ function MobileView() {
             </Button>
           )}
         </div>
-          <div className="grid grid-cols-2 gap-6 mb-3">
-            {categoriesWithIcon.map((categoryItem) => (
-              <Card
-                onClick={() =>
-                  handleNavigateToListingPage(categoryItem, "category")
-                }
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <categoryItem.icon className="w-6 h-6 mb-2 text-primary" />
-                  <span className="font-bold">{categoryItem.label}</span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="grid grid-cols-2 gap-6 mb-3">
+          {categoriesWithIcon.map((categoryItem) => (
+            <Card
+              onClick={() =>
+                handleNavigateToListingPage(categoryItem, "category")
+              }
+              className="hover:shadow-lg transition-shadow"
+            >
+              <CardContent className="flex flex-col items-center justify-center p-6">
+                <categoryItem.icon className="w-6 h-6 mb-2 text-primary" />
+                <span className="font-bold">{categoryItem.label}</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
+        {availableColors.length > 0 && (
           <div>
             <label htmlFor="color" className="block font-bold">
               Choose Color:
             </label>
-            {availableColors.length > 0 ? (
-              <div className="flex gap-3 mt-2">
-                {availableColors.map((color, index) => (
-                  <div key={index} className="relative group">
-                    {/* الزر الدائري مع اللون */}
-                    <button
-                      type="button"
-                      className={`w-8 h-8 rounded-full border-2 border-gray-300 ${
-                        selectedColor === color
-                          ? `border-${color} ring-2 ring-${color}`
-                          : "bg-gray-200"
-                      }`}
-                      style={{
-                        backgroundColor:
-                          color === "black&white"
-                            ? "transparent" // إذا كان اللون black&white نتركه شفاف
-                            : color, // إذا كان لون آخر نعرضه بشكل طبيعي
-                        backgroundImage:
-                          color === "black&white"
-                            ? "linear-gradient(135deg, #000000 50%, #FFFFFF 50%)" // تقسيم نصف دايرتين إلى أسود وأبيض
-                            : "", // إذا كان اللون غير black&white لا نستخدم التدرج
-                      }}
-                      onClick={() => handleColorChange(color)} // تغيير اللون عند النقر
-                      aria-label={`Select ${color}`}
-                    >
-                      {/* عرض العلامة عند التحديد */}
-                      {selectedColor === color && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <svg
-                            className="w-4 h-4 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </span>
-                      )}
-                    </button>
-                    {/* اسم اللون يظهر عند التمرير */}
-                    <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {color === "black&white"
-                        ? "Black & White"
-                        : color.charAt(0).toUpperCase() + color.slice(1)}{" "}
-                      {/* اسم اللون */}
-                    </div>
+            <div className="flex gap-3 mt-2">
+              {availableColors.map((color, index) => (
+                <div key={index} className="relative group">
+                  {/* الزر الدائري مع اللون */}
+                  <button
+                    type="button"
+                    className={`w-8 h-8 rounded-full border-2 border-gray-300 ${
+                      selectedColor === color
+                        ? `border-${color} ring-2 ring-${color}`
+                        : "bg-gray-200"
+                    }`}
+                    style={{
+                      backgroundColor:
+                        color === "black&white"
+                          ? "transparent" // إذا كان اللون black&white نتركه شفاف
+                          : color, // إذا كان لون آخر نعرضه بشكل طبيعي
+                      backgroundImage:
+                        color === "black&white"
+                          ? "linear-gradient(135deg, #000000 50%, #FFFFFF 50%)" // تقسيم نصف دايرتين إلى أسود وأبيض
+                          : "", // إذا كان اللون غير black&white لا نستخدم التدرج
+                    }}
+                    onClick={() => handleColorChange(color)} // تغيير اللون عند النقر
+                    aria-label={`Select ${color}`}
+                  >
+                    {/* عرض العلامة عند التحديد */}
+                    {selectedColor === color && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </button>
+                  {/* اسم اللون يظهر عند التمرير */}
+                  <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {color === "black&white"
+                      ? "Black & White"
+                      : color.charAt(0).toUpperCase() + color.slice(1)}{" "}
+                    {/* اسم اللون */}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-red-500 mt-2">No colors available</p>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
+        )}
 
         {/* {availableSizes.length > 0 && (
             <div className="mt-1">
@@ -468,6 +520,40 @@ function MobileView() {
             </div>
           </div>
         )}
+
+        <div>
+          {showMessage && (
+            <div className="max-w-xs mx-auto mb-1 mt-4 mb-4 ">
+              <button
+                onClick={toggleSizeGuide}
+                className="w-full flex items-center justify-between text-left text-xl font-semibold mb-4"
+              >
+                <span>Size Guide</span>
+                {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+
+              {isOpen && (
+                <ul className="space-y-2">
+                  {[
+                    { size: "M", details: "60-70 kg / 29-31 in jeans" },
+                    { size: "L", details: "70-90 kg / 32-35 in jeans" },
+                    { size: "XL", details: "90-110 kg / 36-38 in jeans" },
+                    { size: "2XL", details: "110-130 kg / 39-44 in jeans" },
+                  ].map((item) => (
+                    <li
+                      key={item.size}
+                      className="flex justify-between p-2 border-b border-gray-300"
+                    >
+                      <span className="font-semibold">{item.size}</span>
+                      <span className="text-gray-600">{item.details}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+        <Separator />
 
         {/* <div className="mt-1">
           <Label>Quantity</Label>
@@ -538,19 +624,19 @@ function MobileView() {
                   <div className="absolute -top-3 left-2 flex gap-2">
                     {isMostPopular && (
                       <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
-                        الأكثر طلباً
+                        Most Popular
                       </div>
                     )}
                     {isBestSaving && (
                       <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
-                        الأكثر توفيراً
+                        Best Saving
                       </div>
                     )}
                   </div>
 
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-gray-800 font-semibold text-lg">
-                      {`أشتري ${item.quantity} شراب`}
+                      {`Buy ${item.quantity}`}
                     </div>
                     <input
                       type="radio"
@@ -562,17 +648,17 @@ function MobileView() {
 
                   <div className="flex items-center gap-2">
                     <p className="text-2xl font-bold text-primary">
-                      {getDiscountedPrice(item.quantity) || 0} ج.م
+                      {getDiscountedPrice(item.quantity)} EGP
                     </p>
                     {getOriginalPrice(item.quantity) && (
                       <p className="text-lg line-through text-gray-400">
-                        {getOriginalPrice(item.quantity)} ج.م
+                        {getOriginalPrice(item.quantity)} EGP
                       </p>
                     )}
                   </div>
 
                   <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
-                    {`سعر الشراب الواحد: ${pricePerItem} ج.م`}
+                    {`Price per item: ${pricePerItem} EGP`}
                   </p>
 
                   {getDiscountLabel(item.quantity) && (
@@ -621,7 +707,27 @@ function MobileView() {
             <Share2 />
           </Button>
         </div>
-
+        <Separator />
+        <div className="space-y-4 text-right">
+          {sections.map(({ id, title, content }) => (
+            <div key={id} className="border rounded-lg p-4">
+              <div
+                className="flex items-center  text-right justify-between cursor-pointer"
+                onClick={() => handleToggle(id)}
+              >
+                <h3 className="font-semibold  text-right text-lg">{title}</h3>
+                {openSection === id ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
+              </div>
+              {openSection === id && (
+                <p className="mt-2 text-gray-600">{content}</p>
+              )}
+            </div>
+          ))}
+        </div>
         {/* <Separator />
         <div className="max-h-[300px] overflow-auto">
           <h2 className="text-xl font-bold mb-4">Reviews</h2>

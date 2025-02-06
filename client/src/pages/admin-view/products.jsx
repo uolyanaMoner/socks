@@ -152,8 +152,6 @@
 
 // export default AdminProducts;
 
-
-
 // import ProductImageUpload from "@/components/admin-view/image-upload";
 // import AdminProductTile from "@/components/admin-view/product-tile";
 // import CommonForm from "@/components/common/form";
@@ -339,7 +337,7 @@ const initialFormData = {
   salePrice: "",
   totalStock: "",
   color: "",
-  size:"",
+  size: "",
   quantityPrices: [], // إضافة quantityPrices هنا
 };
 
@@ -353,6 +351,33 @@ function AdminProducts() {
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
   const { toast } = useToast();
+
+  // لتخزين وتحديث حالة التبديل لكل منتج بشكل منفصل
+  const [toggledStates, setToggledStates] = useState({});
+
+  // التحقق من حالة التبديل لكل منتج عند تحميل الصفحة
+  useEffect(() => {
+    const initialState = {};
+    productList.forEach((product) => {
+      initialState[product.id] =
+        JSON.parse(localStorage.getItem(`showMessage-${product.id}`)) || false;
+    });
+    setToggledStates(initialState);
+  }, [productList]);
+
+  const handleToggleChange = (productId) => {
+    const newToggledStates = {
+      ...toggledStates,
+      [productId]: !toggledStates[productId],
+    };
+    setToggledStates(newToggledStates);
+    // تخزين الحالة الخاصة بكل منتج في localStorage باستخدام productId
+    localStorage.setItem(
+      `showMessage-${productId}`,
+      JSON.stringify(newToggledStates[productId])
+    );
+  };
+  
 
   function onSubmit(event) {
     event.preventDefault();
@@ -450,6 +475,22 @@ function AdminProducts() {
               buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
             />
+            {/* زر Turn On/Off داخل الـ CommonForm فقط في الحالة الأخيرة */}
+            <Button
+              variant={
+                currentEditedId
+                  ? toggledStates[currentEditedId]
+                    ? "default"
+                    : "outline"
+                  : "outline"
+              }
+              onClick={() => handleToggleChange(currentEditedId)}
+              className="mt-2"
+            >
+              {currentEditedId && toggledStates[currentEditedId]
+                ? "Turn Off"
+                : "Turn On"}
+            </Button>
           </div>
         </SheetContent>
       </Sheet>

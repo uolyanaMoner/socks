@@ -477,7 +477,7 @@ function AdminOrderDetailsView() {
         {/* تفاصيل الشحن */}
         <div className="grid gap-2">
           <p className="font-medium">معلومات الشحن</p>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols">
             <span>الاسم: {orderDetails?.addressInfo?.fullName}</span>
             <span>العنوان: {orderDetails?.addressInfo?.address}</span>
             <span>المدينة: {orderDetails?.addressInfo?.city}</span>

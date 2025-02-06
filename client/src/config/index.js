@@ -265,7 +265,7 @@ export const addressFormControls = [
     name: "address",
     componentType: "input",
     type: "text",
-    placeholder: "Enter your address",
+    placeholder: "اكتب عنوانك بالتفصيل",
   },
   // {
   //   label: "City",
