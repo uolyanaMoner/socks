@@ -410,11 +410,11 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               {images.map((img, index) => (
                 <div key={index} style={{ borderRadius: "8px" }}>
                   <img
+                  className='h-[500px]'
                     src={img}
                     alt={`product-${index}`}
                     style={{
                       width: "100%",
-                      height: "100%",
                       objectFit: "cover",
                       borderRadius: "8px",
                     }}
