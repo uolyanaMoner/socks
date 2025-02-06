@@ -513,10 +513,12 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
       paymentMethod: method,
       paymentStatus: "pending",
       totalAmount: totalCartAmount,
+      totalPrice: totalCartAmountBeforeDiscount,
       orderDate: new Date(),
       orderUpdateDate: new Date(),
     };
-  
+  sessionStorage.setItem("orderTime", orderData.orderTime);
+
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/shop/order/create`,
       {
@@ -541,7 +543,8 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
         // حفظ orderId في sessionStorage
         sessionStorage.setItem("currentOrderId", result?.orderId);
         sessionStorage.setItem("paymentMethod", "cod");
-  
+        console.log("Order Data Before Sending:", orderData);
+
         navigate("/shop/paymob-return");
       } else {
         toast({
@@ -559,6 +562,8 @@ const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
   };
   
 
+  console.log("Total Before Discount:", totalCartAmountBeforeDiscount);
+  console.log("Total with Shipping:", totalCartAmount);
 
   return (
     <div className="flex flex-col">

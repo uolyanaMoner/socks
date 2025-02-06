@@ -191,7 +191,6 @@
 // }
 // export default AdminOrdersView;
 
-
 // import { useEffect, useState } from "react";
 // import { Button } from "../ui/button";
 // import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -341,7 +340,6 @@
 // }
 
 // export default AdminOrdersView;
-
 
 // import { useEffect, useState } from "react";
 // import { Button } from "../ui/button";
@@ -517,14 +515,15 @@
 
 // export default AdminOrdersView;
 
-
-
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersForAdmin, updateOrderStatus } from "@/store/admin/order-slice";
+import {
+  getAllOrdersForAdmin,
+  updateOrderStatus,
+} from "@/store/admin/order-slice";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
 
@@ -648,12 +647,26 @@ function AdminOrdersView() {
                   className="border rounded-lg shadow p-4 bg-white"
                 >
                   <p className="font-bold">
-                    Order ID: <span className="font-normal">{orderItem._id}</span>
+                    Order ID:{" "}
+                    <span className="font-normal">{orderItem._id}</span>
                   </p>
                   <p>
                     Order Date:{" "}
                     <span className="font-normal">
                       {orderItem.orderDate.split("T")[0]}
+                    </span>
+                  </p>
+
+                  <p>
+                    Order Time:{" "}
+                    <span className="font-normal">
+                      {new Date(orderItem.orderDate).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )}
                     </span>
                   </p>
                   <p>
@@ -712,6 +725,7 @@ function AdminOrdersView() {
               <tr className="bg-gray-100">
                 <th className="border p-2">Orders ID</th>
                 <th className="border p-2">Orders Date</th>
+                <th className="border p-2">Orders Time</th>
                 <th className="border p-2">Orders Status</th>
                 <th className="border p-2">Orders Price</th>
                 <th className="border p-2">
@@ -725,6 +739,12 @@ function AdminOrdersView() {
                   <td className="border p-2">{orderItem._id}</td>
                   <td className="border p-2">
                     {orderItem.orderDate.split("T")[0]}
+                  </td>
+                  <td className="border p-2">
+                    {new Date(orderItem.orderDate).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </td>
                   <td className="border p-2">
                     {editStatus === orderItem._id ? (
@@ -760,9 +780,7 @@ function AdminOrdersView() {
                   <td className="border p-2">{orderItem.totalAmount} EGP</td>
                   <td className="border p-2 text-center">
                     <Button
-                      onClick={() =>
-                        navigate(`/admin/orders/${orderItem._id}`)
-                      }
+                      onClick={() => navigate(`/admin/orders/${orderItem._id}`)}
                     >
                       View Details
                     </Button>

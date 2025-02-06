@@ -73,9 +73,11 @@ const OrderSchema = new mongoose.Schema({
   paymentMethod: String,
   paymentStatus: String,
   totalAmount: Number,
+  totalPrice: Number,
   shippingCost: Number,
   orderDate: Date,
   orderUpdateDate: Date,
+  orderTime:  String, // تأكدي من وجود هذا الحقل
   paymentId: mongoose.Schema.Types.Mixed, // يقبل String أو Number
   payerId: mongoose.Schema.Types.Mixed, // يقبل String أو Number
   orderId: mongoose.Schema.Types.Mixed, // يقبل String أو Number

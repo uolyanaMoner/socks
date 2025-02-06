@@ -405,6 +405,8 @@ function AdminOrderDetailsView() {
   if (!orderDetails) {
     return <p>لم يتم العثور على تفاصيل الطلب.</p>;
   }
+  console.log("Rendered Order Details:", orderDetails);
+
 
   return (
     <div className="p-4">
@@ -420,7 +422,11 @@ function AdminOrderDetailsView() {
             <Label>{orderDetails?.orderDate?.split("T")[0]}</Label>
           </div>
           <div className="flex items-center justify-between">
-            <p className="font-medium">السعر</p>
+            <p className="font-medium">السعر قبل الشحن</p>
+            <Label>{orderDetails?.totalPrice} جنيه</Label>
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="font-medium">السعر بالشحن</p>
             <Label>{orderDetails?.totalAmount} جنيه</Label>
           </div>
           <div className="flex items-center justify-between">
