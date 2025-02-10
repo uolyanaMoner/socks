@@ -537,6 +537,7 @@ function AdminOrdersView() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [filter, setFilter] = useState("all");
   const [editStatus, setEditStatus] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // إضافة البحث
   const [selectedStatus, setSelectedStatus] = useState(""); // لحفظ الحالة المختارة
   const { toast } = useToast();
 
@@ -599,18 +600,19 @@ function AdminOrdersView() {
     }
   };
 
-  if (isLoading) {
-    return <p>Loading orders...</p>;
-  }
+  if (isLoading) return <p>Loading orders...</p>;
+  if (error) return <p>Error: {error}</p>;
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  const filteredOrders = orderList.filter((order) => {
-    if (filter === "all") return true;
-    return order.orderStatus === filter;
-  });
+  const filteredOrders = orderList
+    .filter((order) => filter === "all" || order.orderStatus === filter)
+    .filter((order) => {
+      const customerName = order?.addressInfo?.fullName || "";
+      const phoneNumber = order.addressInfo?.phone || "";
+      return (
+        customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        phoneNumber.includes(searchTerm)
+      );
+    });
 
   const sortedOrders = [...filteredOrders].sort(
     (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
@@ -622,7 +624,14 @@ function AdminOrdersView() {
         <CardTitle className="text-lg md:text-xl">All Orders</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="mb-4">
+      <div className="mb-4 gap-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="🔍Search by name or phone "
+            className="p-2 border border-gray-300 rounded w-full sm:w-1/3 "
+          />
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -637,6 +646,7 @@ function AdminOrdersView() {
             <option value="delivered">Delivered</option>
           </select>
         </div>
+
 
         {isMobile ? (
           <div className="flex flex-col gap-4">
