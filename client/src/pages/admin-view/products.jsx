@@ -306,7 +306,6 @@
 
 // export default AdminProducts;
 
-
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import AdminProductTile from "@/components/admin-view/product-tile";
 import CommonForm from "@/components/common/form";
@@ -377,7 +376,6 @@ function AdminProducts() {
       JSON.stringify(newToggledStates[productId])
     );
   };
-  
 
   function onSubmit(event) {
     event.preventDefault();
@@ -476,21 +474,15 @@ function AdminProducts() {
               formControls={addProductFormElements}
             />
             {/* زر Turn On/Off داخل الـ CommonForm فقط في الحالة الأخيرة */}
-            <Button
-              variant={
-                currentEditedId
-                  ? toggledStates[currentEditedId]
-                    ? "default"
-                    : "outline"
-                  : "outline"
-              }
-              onClick={() => handleToggleChange(currentEditedId)}
-              className="mt-2"
-            >
-              {currentEditedId && toggledStates[currentEditedId]
-                ? "Turn Off"
-                : "Turn On"}
-            </Button>
+            {currentEditedId && (
+              <Button
+                variant={toggledStates[currentEditedId] ? "default" : "outline"}
+                onClick={() => handleToggleChange(currentEditedId)}
+                className="mt-2"
+              >
+                {toggledStates[currentEditedId] ? "Turn Off" : "Turn On"}
+              </Button>
+            )}
           </div>
         </SheetContent>
       </Sheet>
