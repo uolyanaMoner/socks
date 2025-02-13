@@ -46,6 +46,22 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showMessage, setShowMessage] = useState(false);
 
+  useEffect(() => {
+    const storedShowMessage = JSON.parse(localStorage.getItem("showMessage")) || false;
+    setShowMessage(storedShowMessage);
+  }, []);
+  
+
+  const toggleShowMessage = () => {
+    setShowMessage((prev) => {
+      const newState = !prev;
+      localStorage.setItem("showMessage", JSON.stringify(newState));
+      return newState;
+    });
+  };
+  
+
+
   //for size
   const [isOpen, setIsOpen] = useState(false);
   const toggleSizeGuide = () => {
@@ -641,7 +657,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </div>
           )}
 
-          <div>
+          {/* <div>
             {showMessage && (
               <div className="max-w-xs mx-auto mb-1 mt-4 mb-4 ">
                 <button
@@ -672,7 +688,40 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 )}
               </div>
             )}
-          </div>
+          </div> */}
+          <div>
+  {showMessage && (
+    <div className="max-w-xs mx-auto mb-1 mt-4 mb-4">
+      <button
+        onClick={toggleSizeGuide}
+        className="w-full flex items-center justify-between text-left text-xl font-semibold mb-4"
+      >
+        <span>Size Guide</span>
+        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
+
+      {isOpen && (
+        <ul className="space-y-2">
+          {[
+            { size: "M", details: "60-70 kg / 29-31 in jeans" },
+            { size: "L", details: "70-90 kg / 32-35 in jeans" },
+            { size: "XL", details: "90-110 kg / 36-38 in jeans" },
+            { size: "2XL", details: "110-130 kg / 39-44 in jeans" },
+          ].map((item) => (
+            <li
+              key={item.size}
+              className="flex justify-between p-2 border-b border-gray-300"
+            >
+              <span className="font-semibold">{item.size}</span>
+              <span className="text-gray-600">{item.details}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )}
+</div>
+
           <Separator />
 
           {/* 

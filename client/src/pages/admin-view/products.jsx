@@ -356,25 +356,25 @@ function AdminProducts() {
 
   // التحقق من حالة التبديل لكل منتج عند تحميل الصفحة
   useEffect(() => {
-    const initialState = {};
-    productList.forEach((product) => {
-      initialState[product.id] =
-        JSON.parse(localStorage.getItem(`showMessage-${product.id}`)) || false;
-    });
-    setToggledStates(initialState);
-  }, [productList]);
+    if (currentEditedId !== null) {
+      const savedState = JSON.parse(localStorage.getItem(`showMessage-${currentEditedId}`));
+      setToggledStates((prev) => ({
+        ...prev,
+        [currentEditedId]: savedState ?? false, // تحميل الحالة بدون تعديلها
+      }));
+    }
+  }, [currentEditedId]);
+  
 
   const handleToggleChange = (productId) => {
-    const newToggledStates = {
-      ...toggledStates,
-      [productId]: !toggledStates[productId],
-    };
-    setToggledStates(newToggledStates);
-    // تخزين الحالة الخاصة بكل منتج في localStorage باستخدام productId
-    localStorage.setItem(
-      `showMessage-${productId}`,
-      JSON.stringify(newToggledStates[productId])
-    );
+    setToggledStates((prevStates) => {
+      const newState = !prevStates[productId]; // عكس الحالة الحالية
+      localStorage.setItem(
+        `showMessage-${productId}`,
+        JSON.stringify(newState)
+      );
+      return { ...prevStates, [productId]: newState };
+    });
   };
 
   function onSubmit(event) {
@@ -476,11 +476,14 @@ function AdminProducts() {
             {/* زر Turn On/Off داخل الـ CommonForm فقط في الحالة الأخيرة */}
             {currentEditedId && (
               <Button
-                variant={toggledStates[currentEditedId] ? "default" : "outline"}
+                variant={
+                  !toggledStates[currentEditedId] ? "default" : "outline"
+                } // عكس الحالة هنا
                 onClick={() => handleToggleChange(currentEditedId)}
                 className="mt-2"
               >
-                {toggledStates[currentEditedId] ? "Turn Off" : "Turn On"}
+                {!toggledStates[currentEditedId] ? "Turn Off" : "Turn On"}{" "}
+                {/* عكس النص هنا */}
               </Button>
             )}
           </div>
