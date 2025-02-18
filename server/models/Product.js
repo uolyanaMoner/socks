@@ -40,6 +40,8 @@ const ProductSchema = new mongoose.Schema(
       {
         quantity: { type: Number},  // الكمية
         price: { type: Number },     // السعر المرتبط بالكمية
+        discountedPrice: { type: Number }, // سعر الخصم (اختياري، وإذا لم يُحدد يكون null)
+
       },
     ],
   },

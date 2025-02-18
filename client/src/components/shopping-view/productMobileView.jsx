@@ -573,7 +573,7 @@ function MobileView() {
           </select>
         </div> */}
 
-        <div className="mt-4 space-y-3">
+        {/* <div className="mt-4 space-y-3">
           {(() => {
             const quantityPrices =
               productDetails?.quantityPrices
@@ -670,6 +670,112 @@ function MobileView() {
               );
             });
           })()}
+        </div> */}
+
+        <div className="mt-4 space-y-3">
+          {(() => {
+            const quantityPrices =
+              productDetails?.quantityPrices
+                ?.slice()
+                .sort((a, b) => a.quantity - b.quantity) || [];
+
+            // منع الخطأ لو مفيش بيانات
+            if (quantityPrices.length === 0) {
+              return <p>لا توجد عروض حالياً.</p>;
+            }
+
+            // دالة لحساب سعر الوحدة باستخدام سعر الخصم لو موجود، أو السعر العادي
+            const getPricePerItem = (quantity) => {
+              const item = productDetails?.quantityPrices?.find(
+                (i) => i.quantity === quantity
+              );
+              if (item) {
+                const effectivePrice = item.discountedPrice
+                  ? item.discountedPrice
+                  : item.price;
+                return (effectivePrice / item.quantity).toFixed(2);
+              }
+              return 0;
+            };
+
+            // حساب أقل سعر للوحدة (Price per item) بصيغة ثابتة
+            const minPricePerItem = Math.min(
+              ...quantityPrices.map(
+                (i) => parseFloat(getPricePerItem(i.quantity)) || Infinity
+              )
+            ).toFixed(2);
+
+            return quantityPrices.map((item, index) => {
+              const pricePerItem =
+                parseFloat(getPricePerItem(item.quantity)) || 0;
+              // مقارنة باستخدام <= لتجنب فروق طفيفة في الكسور العشرية
+              const isBestSaving =
+                parseFloat(pricePerItem) <= parseFloat(minPricePerItem);
+              const isMostPopular =
+                item.quantity ===
+                Math.max(...quantityPrices.map((i) => i.quantity));
+
+              return (
+                <div
+                  key={index}
+                  className={`border rounded-lg p-4 relative cursor-pointer transition duration-300 hover:shadow-lg hover:border-blue-400 ${
+                    selectedQuantity === item.quantity
+                      ? "border-blue-500 shadow-md"
+                      : "border-gray-300"
+                  }`}
+                  onClick={() => handleQuantityChange(item.quantity)}
+                >
+                  <div className="absolute -top-3 left-2 flex gap-2">
+                    {isMostPopular && (
+                      <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                        Most Popular
+                      </div>
+                    )}
+                    {isBestSaving && (
+                      <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                        Best Saving
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-gray-800 font-semibold text-lg">
+                      {`Buy ${item.quantity}`}
+                    </div>
+                    <input
+                      type="radio"
+                      checked={selectedQuantity === item.quantity}
+                      readOnly
+                      className="form-radio text-blue-500 w-5 h-5"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <p className="text-2xl font-bold text-primary">
+                      {item.discountedPrice
+                        ? `${item.discountedPrice} EGP`
+                        : `${item.price} EGP`}
+                    </p>
+                    {item.discountedPrice && (
+                      <p className="text-lg line-through text-gray-400">
+                        {item.price} EGP
+                      </p>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
+                    {`Price per item: ${pricePerItem} EGP`}
+                  </p>
+
+                  {getDiscountLabel(item.quantity) && (
+                    <div className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded mt-1 inline-block">
+                      {getDiscountLabel(item.quantity)}
+                    </div>
+                  )}
+                </div>
+              );
+            });
+          })()}
         </div>
 
         {(selectedColor === "black&white" || selectedColor === "white&black") &&
@@ -708,14 +814,15 @@ function MobileView() {
           </Button>
         </div>
         <Separator />
-        <div className="space-y-4 text-right">
+        <div className="space-y-4 text-right" dir="rtl">
           {sections.map(({ id, title, content }) => (
             <div key={id} className="border rounded-lg p-4">
               <div
-                className="flex items-center  text-right justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer"
                 onClick={() => handleToggle(id)}
               >
-                <h3 className="font-semibold  text-right text-lg">{title}</h3>
+                {/* في RTL العنوان هيظهر على اليمين تلقائياً */}
+                <h3 className="font-semibold text-lg">{title}</h3>
                 {openSection === id ? (
                   <ChevronUp size={20} />
                 ) : (
@@ -728,6 +835,7 @@ function MobileView() {
             </div>
           ))}
         </div>
+
         {/* <Separator />
         <div className="max-h-[300px] overflow-auto">
           <h2 className="text-xl font-bold mb-4">Reviews</h2>
