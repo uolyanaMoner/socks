@@ -34,6 +34,7 @@ const ProductSchema = new mongoose.Schema(
     averageReview: Number,
     color: String,
     size: String,
+    isHidden: Boolean,
     additionalDetails: String,
     // إضافة حقل quantityPrices
     quantityPrices: [

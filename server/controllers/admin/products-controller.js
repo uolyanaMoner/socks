@@ -128,6 +128,7 @@ const editProduct = async (req, res) => {
       color,
       size,
       quantityPrices,
+      isHidden,
     } = req.body;
 
     let findProduct = await Product.findById(id);
@@ -150,6 +151,7 @@ const editProduct = async (req, res) => {
     findProduct.size = size || findProduct.size;
     findProduct.averageReview = averageReview || findProduct.averageReview;
     findProduct.quantityPrices = quantityPrices || findProduct.quantityPrices;
+    findProduct.isHidden = isHidden !== undefined ? isHidden : findProduct.isHidden;
 
     await findProduct.save();
     res.status(200).json({
