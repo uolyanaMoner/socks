@@ -110,12 +110,40 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     // هنا يمكن أيضًا تحديث الكارت إذا كنت بحاجة إلى إضافة الكمية المختارة إليه
   };
 
-  const getDiscountedPrice = (quantity) => {
-    return (
-      productDetails?.quantityPrices?.find((item) => item.quantity === quantity)
-        ?.price || productDetails?.price
+  // const getDiscountedPrice = (quantity) => {
+  //   return (
+  //     productDetails?.quantityPrices?.find((item) => item.quantity === quantity)
+  //       ?.price || productDetails?.price
+  //   );
+  // };
+
+  const getDiscountedPrice = (productId, quantity) => {
+    const product = productList?.find((item) => item._id === productId);
+  
+    console.log("🔍 Checking Discounted Price for:", { productId, quantity, product });
+  
+    if (!product) {
+      console.log("⚠️ Product not found!");
+      return 0;
+    }
+  
+    // البحث عن الكمية المطلوبة
+    const quantityPrice = product?.quantityPrices?.find(
+      (item) => item.quantity === quantity
     );
+  
+    console.log("✅ Found Quantity Price:", quantityPrice);
+  
+    // ✅ استخدام `discountedPrice` لو موجود، وإلا `price`
+    const finalPrice = quantityPrice
+      ? quantityPrice.discountedPrice ?? quantityPrice.price
+      : product.price * quantity;
+  
+    console.log("💰 Final Price:", finalPrice);
+  
+    return finalPrice;
   };
+  
 
   const getOriginalPrice = (quantity) => {
     return productDetails?.quantityPrices?.find(
@@ -160,11 +188,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     setSelectedSize(size); // تحديث الحالة لاختيار المقاس
   };
 
-  // const handleColorChange = (event) => {
-  //   const newColor = event.target.value;
-  //   setSelectedColor(newColor);
-  // };
-
   const handleAdditionalDetailsChange = (event) => {
     setAdditionalDetails(event.target.value); // تحديث النص عند الكتابة
   };
@@ -200,52 +223,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     }
   }, [productDetails?.size]);
 
-  // function handleAddToCart(getCurrentProductId, getTotalStock) {
-  //   // if (quantity > getTotalStock) {
-  //   //   toast({
-  //   //     title: `Only ${getTotalStock} items available in stock`,
-  //   //     variant: "destructive",
-  //   //   });
-  //   //   return;
-  //   // }
-
-  //   // تحقق من اللون والكمية لإرسال التفاصيل
-  //   const userId = user?.id || localStorage.getItem("guestUserId");
-
-  //   // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
-  //   if (!userId) {
-  //     const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
-  //     localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
-  //   }
-
-  //   const shouldSubmitDetails =
-  //     (selectedColor === "black&white" || selectedColor === "white&black") &&
-  //     (quantity === 5 || quantity === 10);
-  //   if (userId) {
-  //     dispatch(
-  //       addToCart({
-  //         userId,
-  //         productId: getCurrentProductId,
-  //         quantity,
-  //         color: selectedColor || "",
-  //         additionalDetails: shouldSubmitDetails ? additionalDetails : "",
-  //       })
-  //     ).then((data) => {
-  //       if (data?.payload?.success) {
-  //         dispatch(fetchCartItems(userId)); // تمرير userId بدلاً من user?.id
-  //         toast({
-  //           title: "Product is added to cart",
-  //         });
-  //       }
-  //     });
-  //   } else {
-  //     toast({
-  //       title: "Unable to get User ID",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // }
-
+ 
   const shareProduct = async () => {
     const productUrl = window.location.href; // الحصول على رابط المنتج الحالي
 
@@ -267,16 +245,58 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     }
   };
 
+  // function handleAddToCart(getCurrentProductId, getTotalStock) {
+  //   const userId = user?.id || localStorage.getItem("guestUserId");
+
+  //   if (!userId) {
+  //     const generatedUserId = `guest-${Date.now()}`;
+  //     localStorage.setItem("guestUserId", generatedUserId);
+  //   }
+
+  //   let selectedPrice = getDiscountedPrice(selectedQuantity); // Use the price based on quantity selection
+
+  //   const cartItem = {
+  //     userId,
+  //     productId: getCurrentProductId,
+  //     quantity: selectedQuantity,
+  //     price: selectedPrice,
+  //     color: selectedColor || "defaultColor",
+  //     additionalDetails: additionalDetails,
+  //     ...(availableSizes.length > 0 && { size: selectedSize }), // تضمين الحجم فقط إذا كان متاحًا
+  //   };
+  //   console.log("cartItem", cartItem);
+  //   // Dispatch action to add the product to cart
+  //   dispatch(addToCart(cartItem)).then((data) => {
+  //     if (data?.payload?.success) {
+  //       dispatch(fetchCartItems(userId));
+  //       toast({
+  //         title: "Product is added to cart",
+  //         style: {
+  //           position: "fixed",
+  //           left: "50%",
+  //           transform: "translateX(-50%)",
+  //           bottom: "20px", // أسفل الصفحة عند الموبايل
+  //         },
+  //       });
+  //     }
+  //   });
+  // }
+
   function handleAddToCart(getCurrentProductId, getTotalStock) {
-    const userId = user?.id || localStorage.getItem("guestUserId");
-
+    let userId = user?.id || localStorage.getItem("guestUserId");
+  
     if (!userId) {
-      const generatedUserId = `guest-${Date.now()}`;
-      localStorage.setItem("guestUserId", generatedUserId);
+      userId = `guest-${Date.now()}`;
+      localStorage.setItem("guestUserId", userId);
     }
-
-    let selectedPrice = getDiscountedPrice(quantity); // Use the price based on quantity selection
-
+  
+    console.log("🛒 Adding to Cart:", { userId, getCurrentProductId, selectedQuantity });
+  
+    // ✅ جلب السعر المخفض أو العادي
+    let selectedPrice = getDiscountedPrice(getCurrentProductId, selectedQuantity);
+  
+    console.log("🛒 Selected Price Before Adding to Cart:", selectedPrice);
+  
     const cartItem = {
       userId,
       productId: getCurrentProductId,
@@ -284,25 +304,34 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       price: selectedPrice,
       color: selectedColor || "defaultColor",
       additionalDetails: additionalDetails,
-      ...(availableSizes.length > 0 && { size: selectedSize }), // تضمين الحجم فقط إذا كان متاحًا
+      ...(availableSizes.length > 0 && { size: selectedSize }),
     };
-    console.log("cartItem", cartItem);
-    // Dispatch action to add the product to cart
+  
+    console.log("✅ Final Cart Item:", cartItem);
+  
     dispatch(addToCart(cartItem)).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchCartItems(userId));
+        console.log("✅ Product added successfully!");
+  
         toast({
           title: "Product is added to cart",
           style: {
             position: "fixed",
             left: "50%",
             transform: "translateX(-50%)",
-            bottom: "20px", // أسفل الصفحة عند الموبايل
+            bottom: "20px",
           },
         });
+      } else {
+        console.log("❌ Error adding product to cart!");
       }
     });
   }
+  
+  
+
+  
 
   // function handleDialogClose() {
   //   setOpen(false);
@@ -822,7 +851,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             })()}
           </div> */}
 
-          <div className="mt-3 space-y-3">
+          {/* <div className="mt-3 space-y-3">
             {(() => {
               const quantityPrices = productDetails?.quantityPrices
                 ?.slice()
@@ -907,7 +936,90 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 );
               });
             })()}
+          </div> */}
+
+<div className="mt-3 space-y-3">
+  {(() => {
+    const quantityPrices = productDetails?.quantityPrices
+      ?.slice()
+      .sort((a, b) => a.quantity - b.quantity);
+
+    const minPricePerItem = Math.min(
+      ...quantityPrices.map((i) =>
+        i.discountedPrice
+          ? i.discountedPrice / i.quantity
+          : i.price / i.quantity
+      )
+    ).toFixed(2);
+
+    return quantityPrices.map((item, index) => {
+      const pricePerItem = item.discountedPrice
+        ? (item.discountedPrice / item.quantity).toFixed(2)
+        : (item.price / item.quantity).toFixed(2);
+
+      const isBestSaving = pricePerItem <= minPricePerItem;
+
+      const filteredArray = quantityPrices.filter((i) => i.quantity !== 1);
+      const isMostPopular =
+        item.quantity === Math.max(...filteredArray.map((i) => i.quantity));
+
+      return (
+        <div
+          key={index}
+          className={`border rounded-lg p-4 relative cursor-pointer transition duration-300 hover:shadow-lg hover:border-blue-400 ${
+            selectedQuantity === item.quantity
+              ? "border-blue-500 shadow-md"
+              : "border-gray-300"
+          }`}
+          onClick={() => handleQuantityChange(item.quantity)}
+        >
+          <div className="absolute -top-3 left-2 flex gap-2">
+            {isMostPopular && (
+              <div className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                Most Popular
+              </div>
+            )}
+            {isBestSaving && (
+              <div className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                Best Saving
+              </div>
+            )}
           </div>
+
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-gray-800 font-semibold text-lg">
+              {`Buy ${item.quantity}`}
+            </div>
+            <input
+              type="radio"
+              checked={selectedQuantity === item.quantity}
+              readOnly
+              className="form-radio text-blue-500 w-5 h-5"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <p className="text-2xl font-bold text-primary">
+              {item.discountedPrice
+                ? `${item.discountedPrice} EGP`
+                : `${item.price} EGP`}
+            </p>
+            {item.discountedPrice && (
+              <p className="text-lg line-through text-gray-400">
+                {item.price} EGP
+              </p>
+            )}
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 font-bold bg-gray-100 px-2 py-1 inline-block rounded">
+            {`Price per item: ${pricePerItem} EGP`}
+          </p>
+        </div>
+      );
+    });
+  })()}
+</div>
+
 
           {/* Text area for additional input */}
           {(selectedColor === "black&white" ||

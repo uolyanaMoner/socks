@@ -495,7 +495,6 @@
 
 // export default AdminProducts;
 
-
 import React, { Fragment, useEffect, useState } from "react";
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import AdminProductTile from "@/components/admin-view/product-tile";
@@ -535,12 +534,23 @@ function AdminProducts() {
   const [formData, setFormData] = useState(initialFormData);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [currentEditedId, setCurrentEditedId] = useState(null);
+  // state لتخزين حالة Turn On/Off لكل منتج أثناء التعديل
+  const [toggledStates, setToggledStates] = useState({});
 
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
-  // دالة لتبديل حالة isHidden (Hide/Unhide)
+  // دالة لتحديث حالة التبديل (Turn On/Off)
+  const handleToggleChange = (productId) => {
+    setToggledStates((prevStates) => {
+      const newState = !prevStates[productId];
+      localStorage.setItem(`showMessage-${productId}`, JSON.stringify(newState));
+      return { ...prevStates, [productId]: newState };
+    });
+  };
+
+  // دالة لتحديث حالة isHidden (Hide/Unhide) والتي تُستخدم في بطاقة المنتج
   const toggleHide = (productId, newStatus) => {
     console.log("Toggling hide for product:", productId, "to", newStatus);
     dispatch(editProduct({ id: productId, formData: { isHidden: newStatus } }))
@@ -557,7 +567,6 @@ function AdminProducts() {
       });
   };
 
-  // دالة لحذف المنتج
   const handleDelete = (productId) => {
     dispatch(deleteProduct(productId)).then((data) => {
       if (data?.payload?.success) {
@@ -566,14 +575,16 @@ function AdminProducts() {
     });
   };
 
-  // عند الضغط على Edit يتم فتح النموذج وتعبئة البيانات
+  // دالة فتح نموذج التعديل
   const handleEdit = (product) => {
     setOpenCreateProductsDialog(true);
     setCurrentEditedId(product._id);
     setFormData(product);
+    // يمكن تحميل حالة turn on/off إذا كانت محفوظة مسبقاً
+    const savedState = JSON.parse(localStorage.getItem(`showMessage-${product._id}`));
+    setToggledStates((prev) => ({ ...prev, [product._id]: savedState ?? false }));
   };
 
-  // دالة إرسال النموذج
   function onSubmit(event) {
     event.preventDefault();
     const productData = {
@@ -618,8 +629,8 @@ function AdminProducts() {
                 setOpenCreateProductsDialog={setOpenCreateProductsDialog}
                 setCurrentEditedId={setCurrentEditedId}
                 handleDelete={handleDelete}
-                handleToggleHide={toggleHide} // تمرير دالة toggleHide
-                handleEdit={handleEdit} // تمرير دالة Edit
+                handleToggleHide={toggleHide}
+                handleEdit={handleEdit}
               />
             ))
           : null}
@@ -652,6 +663,16 @@ function AdminProducts() {
               buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
             />
+            {/* زر Turn On/Off يظهر فقط عند التعديل */}
+            {currentEditedId && (
+              <Button
+                variant={!toggledStates[currentEditedId] ? "default" : "outline"}
+                onClick={() => handleToggleChange(currentEditedId)}
+                className="mt-2"
+              >
+                {!toggledStates[currentEditedId] ? "Turn Off" : "Turn On"}
+              </Button>
+            )}
           </div>
         </SheetContent>
       </Sheet>
