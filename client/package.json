@@ -25,6 +25,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@stripe/stripe-js": "^4.10.0",
     "axios": "^1.7.4",
+    "bson-objectid": "^2.0.4",
     "class-variance-authority": "^0.7.0",
     "cloudinary-react": "^1.8.1",
     "clsx": "^2.1.1",

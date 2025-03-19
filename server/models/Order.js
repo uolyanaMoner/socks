@@ -1,51 +1,12 @@
-// const mongoose = require("mongoose");
-
-// const OrderSchema = new mongoose.Schema({
-//   userId: String,
-//   cartId: String,
-//   cartItems: [
-//     {
-//       productId: String,
-//       title: String,
-//       image: String,
-//       price: String,
-//       quantity: Number,
-//       color: String,
-//       additionalDetails: String,
-//     },
-//   ],
-//   addressInfo: {
-//     addressId: String,
-//     address: String,
-//     city: String,
-//     phone: String,
-//     notes: String,
-//   },
-//   orderStatus: String,
-//   paymentMethod: String,
-//   paymentStatus: String,
-//   totalAmount: Number,
-//   shippingCost:Number,
-//   orderDate: Date,
-//   orderUpdateDate: Date,
-//   paymentId: String || Number,
-//   payerId: String || Number,
-//   orderId: String || Number,
-// });
-
-// module.exports = mongoose.model("Order", OrderSchema);
-
-
-
 const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.Mixed, // يسمح بتخزين ObjectId أو String
+    type: mongoose.Schema.Types.Mixed, 
     required: true,
   },
   cartId: {
-    type: String, // حفظ معرف السلة
+    type: String,
     required: true,
   },
   cartItems: [
@@ -77,10 +38,10 @@ const OrderSchema = new mongoose.Schema({
   shippingCost: Number,
   orderDate: Date,
   orderUpdateDate: Date,
-  orderTime:  String, // تأكدي من وجود هذا الحقل
-  paymentId: mongoose.Schema.Types.Mixed, // يقبل String أو Number
-  payerId: mongoose.Schema.Types.Mixed, // يقبل String أو Number
-  orderId: mongoose.Schema.Types.Mixed, // يقبل String أو Number
+  orderTime:  String, 
+  paymentId: mongoose.Schema.Types.Mixed, 
+  payerId: mongoose.Schema.Types.Mixed, 
+  orderId: mongoose.Schema.Types.Mixed, 
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

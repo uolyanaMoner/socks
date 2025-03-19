@@ -1,5 +1,6 @@
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
+const mongoose = require("mongoose");
 
 // const handleImageUpload = async (req, res) => {
 //   try {
@@ -45,59 +46,158 @@ async function handleImagesUpload(req, res) {
 
 
 //add a new product
+// const addProduct = async (req, res) => {
+//   try {
+//     const {
+//       image,
+//       title,
+//       description,
+//       category,
+//       brand,
+//       price,
+//       salePrice,
+//       totalStock,
+//       averageReview,
+//       color,
+//       size,
+//       quantityPrices,
+//       partition,
+//       partitionId,
+//     } = req.body;
+
+//     console.log(averageReview, "averageReview");
+
+//     const newlyCreatedProduct = new Product({
+//       image,
+//       title,
+//       description,
+//       category,
+//       brand,
+//       price,
+//       salePrice,
+//       totalStock,
+//       averageReview,
+//       color,
+//       size,
+//       quantityPrices,
+//       partition,
+//       partitionId,
+//     });
+
+//     await newlyCreatedProduct.save();
+//     res.status(201).json({
+//       success: true,
+//       data: newlyCreatedProduct,
+//     });
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error occurred",
+//     });
+//   }
+// };
+
+// const addProduct = async (req, res) => {
+//   try {
+//     let { partitionId, ...rest } = req.body;
+
+//     console.log("🔍 Received partitionId:", partitionId); // التحقق من القيمة المستلمة
+
+//     // ✅ التحقق من أن partitionId موجود
+//     if (!partitionId) {
+//       console.error("❌ partitionId مفقود!");
+//       return res.status(400).json({ message: "❌ partitionId مطلوب" });
+//     }
+
+//     // ✅ التحقق من أن partitionId صالح
+//     if (typeof partitionId === "string") {
+//       if (mongoose.Types.ObjectId.isValid(partitionId)) {
+//         partitionId = new mongoose.Types.ObjectId(partitionId); // تحويل إلى ObjectId
+//       } else {
+//         console.error("❌ partitionId غير صالح:", partitionId);
+//         return res.status(400).json({ message: "❌ partitionId غير صالح، يرجى إرسال ID صحيح" });
+//       }
+//     } else if (!mongoose.Types.ObjectId.isValid(partitionId)) {
+//       console.error("❌ partitionId غير صالح:", partitionId);
+//       return res.status(400).json({ message: "❌ partitionId يجب أن يكون ObjectId صحيح" });
+//     }
+
+//     console.log("✅ partitionId بعد المعالجة:", partitionId);
+
+//     // ✅ إنشاء المنتج وحفظه في قاعدة البيانات
+//     const newProduct = new Product({ partitionId, ...rest });
+//     await newProduct.save();
+
+//     console.log("🎉 منتج تمت إضافته بنجاح:", newProduct);
+//     res.status(201).json({ message: "✅ تم إضافة المنتج بنجاح", product: newProduct });
+//   } catch (error) {
+//     console.error("❌ Error Adding Product:", error);
+//     res.status(500).json({ message: "❌ حدث خطأ أثناء إضافة المنتج", error: error.message });
+//   }
+// };
+
 const addProduct = async (req, res) => {
   try {
-    const {
-      image,
-      title,
-      description,
-      category,
-      brand,
-      price,
-      salePrice,
-      totalStock,
-      averageReview,
-      color,
-      size,
-      quantityPrices,
-    } = req.body;
+    let { partitionId, ...rest } = req.body;
 
-    console.log(averageReview, "averageReview");
+    console.log("🔍 Received partitionId:", partitionId); // التحقق من القيمة المستلمة
 
-    const newlyCreatedProduct = new Product({
-      image,
-      title,
-      description,
-      category,
-      brand,
-      price,
-      salePrice,
-      totalStock,
-      averageReview,
-      color,
-      size,
-      quantityPrices,
-    });
+    // ✅ التحقق من أن partitionId موجود وصالح
+    if (partitionId) {
+      if (typeof partitionId === "string" && mongoose.Types.ObjectId.isValid(partitionId)) {
+        partitionId = new mongoose.Types.ObjectId(partitionId); // تحويل إلى ObjectId
+      } else if (!mongoose.Types.ObjectId.isValid(partitionId)) {
+        console.error("❌ partitionId غير صالح:", partitionId);
+        return res.status(400).json({ message: "❌ partitionId غير صالح، يرجى إرسال ID صحيح" });
+      }
+    } else {
+      console.log("⚠️ لا يوجد partitionId، سيتم حفظ المنتج بدون برتيشن.");
+      partitionId = undefined; // لا يتم تضمين `partitionId` في البيانات
+    }
 
-    await newlyCreatedProduct.save();
-    res.status(201).json({
-      success: true,
-      data: newlyCreatedProduct,
-    });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({
-      success: false,
-      message: "Error occurred",
-    });
+    console.log("✅ partitionId بعد المعالجة:", partitionId);
+
+    // ✅ إنشاء المنتج وحفظه في قاعدة البيانات
+    const newProduct = new Product({ ...(partitionId && { partitionId }), ...rest });
+    await newProduct.save();
+
+    console.log("🎉 منتج تمت إضافته بنجاح:", newProduct);
+    res.status(201).json({ message: "✅ تم إضافة المنتج بنجاح", product: newProduct });
+  } catch (error) {
+    console.error("❌ Error Adding Product:", error);
+    res.status(500).json({ message: "❌ حدث خطأ أثناء إضافة المنتج", error: error.message });
   }
 };
 
 //fetch all products
 
+// const fetchAllProducts = async (req, res) => {
+//   try {
+//     const listOfProducts = await Product.find({});
+//     res.status(200).json({
+//       success: true,
+//       data: listOfProducts,
+//     });
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error occurred",
+//     });
+//   }
+// };
+
 const fetchAllProducts = async (req, res) => {
   try {
-    const listOfProducts = await Product.find({});
+    const { partitionId } = req.query; // ✅ جلب partitionId من الـ query
+
+    let filter = {};
+    if (partitionId) {
+      filter.partitionId = partitionId; // ✅ فلترة المنتجات حسب partitionId
+    }
+
+    const listOfProducts = await Product.find(filter); // ✅ تطبيق الفلتر
     res.status(200).json({
       success: true,
       data: listOfProducts,
@@ -110,6 +210,7 @@ const fetchAllProducts = async (req, res) => {
     });
   }
 };
+
 
 //edit a product
 const editProduct = async (req, res) => {
@@ -128,7 +229,9 @@ const editProduct = async (req, res) => {
       color,
       size,
       quantityPrices,
+      partition,
       isHidden,
+      partitionId,
     } = req.body;
 
     let findProduct = await Product.findById(id);
@@ -152,6 +255,9 @@ const editProduct = async (req, res) => {
     findProduct.averageReview = averageReview || findProduct.averageReview;
     findProduct.quantityPrices = quantityPrices || findProduct.quantityPrices;
     findProduct.isHidden = isHidden !== undefined ? isHidden : findProduct.isHidden;
+    findProduct.partition = partition || findProduct.partition;
+    findProduct.partitionId = partitionId || findProduct.partitionId;
+  
 
     await findProduct.save();
     res.status(200).json({

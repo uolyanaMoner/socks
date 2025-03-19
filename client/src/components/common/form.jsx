@@ -267,38 +267,70 @@ function CommonForm({
 }) {
   const { toast } = useToast();
 
+  
   // Function to add a new quantity-price pair
+  // const handleAddQuantityPrice = () => {
+  //   const quantity = formData.quantity?.trim();
+  //   const price = formData.quantityPrice?.trim();
+  //   const discountedPrice = formData.discountedPrice?.trim();
+
+  //   if (!quantity || !price) {
+  //     toast({
+  //       title: "Please enter both quantity and price.",
+  //       style: {
+  //         position: "fixed",
+  //         left: "50%",
+  //         transform: "translateX(-50%)",
+  //         bottom: "20px",
+  //       },
+  //     });
+  //     return;
+  //   }
+
+  //   const updatedQuantityPrices = [
+  //     ...formData.quantityPrices,
+  //     { quantity, price, discountedPrice },
+  //   ];
+
+  //   setFormData({
+  //     ...formData,
+  //     quantityPrices: updatedQuantityPrices,
+  //     quantity: "",
+  //     quantityPrice: "",
+  //     discountedPrice: "",
+  //   });
+  // };
+
   const handleAddQuantityPrice = () => {
-    const quantity = formData.quantity?.trim();
-    const price = formData.quantityPrice?.trim();
-    const discountedPrice = formData.discountedPrice?.trim();
+  const quantity = formData.quantity?.trim();
+  const price = formData.quantityPrice?.trim();
+  const discountedPrice = formData.discountedPrice?.trim();
 
-    if (!quantity || !price) {
-      toast({
-        title: "Please enter both quantity and price.",
-        style: {
-          position: "fixed",
-          left: "50%",
-          transform: "translateX(-50%)",
-          bottom: "20px",
-        },
-      });
-      return;
-    }
-
-    const updatedQuantityPrices = [
-      ...formData.quantityPrices,
-      { quantity, price, discountedPrice },
-    ];
-
-    setFormData({
-      ...formData,
-      quantityPrices: updatedQuantityPrices,
-      quantity: "",
-      quantityPrice: "",
-      discountedPrice: "",
+  if (!quantity || !price) {
+    toast({
+      title: "Please enter both quantity and price.",
+      style: {
+        position: "fixed",
+        left: "50%",
+        transform: "translateX(-50%)",
+        bottom: "20px",
+      },
     });
-  };
+    return;
+  }
+
+  setFormData((prevData) => ({
+    ...prevData,
+    quantityPrices: [
+      ...(Array.isArray(prevData.quantityPrices) ? prevData.quantityPrices : []),
+      { quantity, price, discountedPrice },
+    ],
+    quantity: "",
+    quantityPrice: "",
+    discountedPrice: "",
+  }));
+};
+
 
   // Function to handle changes for existing quantity-price pairs
   const handleQuantityPriceChange = (index, field, value) => {
@@ -448,56 +480,42 @@ function CommonForm({
                   </Button>
                 </div>
                 <div className="mt-3">
-                  {formData.quantityPrices?.length > 0 ? (
-                    formData.quantityPrices.map((item, index) => (
-                      <div key={index} className="flex gap-3 mb-1">
-                        <Input
-                          type="number"
-                          placeholder="Quantity"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleQuantityPriceChange(
-                              index,
-                              "quantity",
-                              e.target.value
-                            )
-                          }
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Price"
-                          value={item.price}
-                          onChange={(e) =>
-                            handleQuantityPriceChange(
-                              index,
-                              "price",
-                              e.target.value
-                            )
-                          }
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Discounted Price"
-                          value={item.discountedPrice}
-                          onChange={(e) =>
-                            handleQuantityPriceChange(
-                              index,
-                              "discountedPrice",
-                              e.target.value
-                            )
-                          }
-                        />
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleDeleteQuantityPrice(index)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No quantity-price pairs added yet.</p>
-                  )}
+                {Array.isArray(formData.quantityPrices) && formData.quantityPrices.length > 0 ? (
+  formData.quantityPrices.map((item, index) => (
+    <div key={index} className="flex gap-3 mb-1">
+      <Input
+        type="number"
+        placeholder="Quantity"
+        value={item.quantity}
+        onChange={(e) =>
+          handleQuantityPriceChange(index, "quantity", e.target.value)
+        }
+      />
+      <Input
+        type="number"
+        placeholder="Price"
+        value={item.price}
+        onChange={(e) =>
+          handleQuantityPriceChange(index, "price", e.target.value)
+        }
+      />
+      <Input
+        type="number"
+        placeholder="Discounted Price"
+        value={item.discountedPrice}
+        onChange={(e) =>
+          handleQuantityPriceChange(index, "discountedPrice", e.target.value)
+        }
+      />
+      <Button variant="destructive" onClick={() => handleDeleteQuantityPrice(index)}>
+        Delete
+      </Button>
+    </div>
+  ))
+) : (
+  <p>No quantity-price pairs added yet.</p>
+)}
+
                 </div>
               </>
             ) : (

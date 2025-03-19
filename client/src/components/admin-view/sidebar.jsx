@@ -27,6 +27,12 @@ const adminSidebarMenuItems = [
     path: "/admin/orders",
     icon: <BadgeCheck />,
   },
+  {
+    id: "features",
+    label: "Partitions",
+    path: "/admin/features",
+    icon: <BadgeCheck />,
+  },
 ];
 
 function MenuItems({ setOpen }) {

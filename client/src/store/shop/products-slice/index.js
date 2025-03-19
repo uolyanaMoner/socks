@@ -4,12 +4,12 @@ import axios from "axios";
 const initialState = {
   isLoading: false,
   productList: [],
-  productDetails : null,
+  productDetails: null,
 };
 
 export const fetchAllFilteredProducts = createAsyncThunk(
   "/products/fetchAllProducts",
-  async ({filterParams, sortParams}) => {
+  async ({ filterParams, sortParams }) => {
     console.log(fetchAllFilteredProducts, "fetchAllFilteredProducts");
 
     const query = new URLSearchParams({
@@ -27,11 +27,26 @@ export const fetchAllFilteredProducts = createAsyncThunk(
   }
 );
 
+export const fetchAllPartitionProducts = createAsyncThunk(
+  "/products/fetchAllPartitionProducts",
+  async ({ partitionId }) => {
+    console.log("📌 Fetching products for partition:", partitionId);
+
+    // ✅ تمرير partitionId كـ query parameter
+    const result = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/api/shop/products/get?partitionId=${encodeURIComponent(partitionId)}`
+    );
+
+    console.log("✅ API Response - Partition Products:", result.data);
+    return result?.data;
+  }
+);
 
 export const fetchProductDetails = createAsyncThunk(
   "/products/fetchProductDetails",
   async (id) => {
-
     const result = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/shop/products/get/${id}`
     );
@@ -40,14 +55,13 @@ export const fetchProductDetails = createAsyncThunk(
   }
 );
 
-
 const shoppingProductSlice = createSlice({
   name: "shoppingProducts",
   initialState,
   reducers: {
-    setProductDetails: (state)=> {
+    setProductDetails: (state) => {
       state.productDetails = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,7 +76,8 @@ const shoppingProductSlice = createSlice({
       .addCase(fetchAllFilteredProducts.rejected, (state, action) => {
         state.isLoading = false;
         state.productList = [];
-      }).addCase(fetchProductDetails.pending, (state, action) => {
+      })
+      .addCase(fetchProductDetails.pending, (state, action) => {
         state.isLoading = true;
       })
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
@@ -77,7 +92,6 @@ const shoppingProductSlice = createSlice({
   },
 });
 
-export const {setProductDetails} = shoppingProductSlice.actions;
-
+export const { setProductDetails } = shoppingProductSlice.actions;
 
 export default shoppingProductSlice.reducer;

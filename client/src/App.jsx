@@ -247,6 +247,7 @@ import PaymobReturnPage from "./pages/shopping-view/paymob";
 import MobileView from "./components/shopping-view/productMobileView";
 import AdminOrderDetailsView from "./components/admin-view/order-details";
 import ConsentBanner from "./pages/shopping-view/consentBanner";
+import PartitionProducts from "./components/shopping-view/partition-products";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
@@ -335,6 +336,7 @@ function App() {
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={<ShoppingAccount />} />
           <Route path="mobile-view/:productId" element={<MobileView />} />
+          <Route path="partition/:partitionId" element={<PartitionProducts />} />
           <Route path="paymob-return" element={<PaymobReturnPage />} />
           <Route path="payment-success" element={<PaymentSuccessPage />} />
           <Route path="search" element={<SearchProducts />} />

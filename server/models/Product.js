@@ -34,6 +34,8 @@ const ProductSchema = new mongoose.Schema(
     averageReview: Number,
     color: String,
     size: String,
+    partition: String,
+    partitionId: { type: mongoose.Schema.Types.ObjectId, ref: "Partition" },
     isHidden: Boolean,
     additionalDetails: String,
     // إضافة حقل quantityPrices

@@ -1,5 +1,11 @@
+import AdminPartitions from "@/components/admin-view/partitions";
+
 function AdminFeatures() {
-  return <div>admin features</div>;
+  return (
+    <div>
+      <AdminPartitions />
+    </div>
+  );
 }
 
 export default AdminFeatures;
