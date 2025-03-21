@@ -3,6 +3,7 @@ import {
   ChartNoAxesCombined,
   LayoutDashboard,
   ShoppingBasket,
+  Boxes,
 } from "lucide-react";
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +32,7 @@ const adminSidebarMenuItems = [
     id: "features",
     label: "Partitions",
     path: "/admin/features",
-    icon: <BadgeCheck />,
+    icon:  <Boxes />,
   },
 ];
 
