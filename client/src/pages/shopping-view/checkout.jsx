@@ -47,68 +47,53 @@ function ShoppingCheckout() {
     setGovernment(selectedProvince);
     setShippingCost(shippingCosts[selectedProvince]);
   };
-
-// دالة لحساب السعر المخصوم بناءً على الكمية
-const getDiscountedPrice = (productId, quantity) => {
-  const product = productList?.find((item) => item._id === productId);
-  const price = product?.quantityPrices?.find(
-    (item) => item.quantity === quantity
-  )?.price;
-  return price || null;
-};
-
-// دالة لحساب السعر العادي بناءً على الكمية
-const getPriceBasedOnQuantity = (productId, quantity) => {
-  const product = productList?.find((item) => item._id === productId);
-  const price = product?.salePrice > 0 ? product.salePrice : product?.price;
-  return price;
-};
-
-// حساب إجمالي المبلغ في التوتال (دون الشحن والخصم)
-const totalCartAmountBeforeDiscount =
-  cartItems && cartItems.items && cartItems.items.length > 0
-    ? cartItems.items.reduce((sum, currentItem) => {
-        // الحصول على السعر المخصص للكمية (إذا كان موجودًا)
-        const discountedPrice = getDiscountedPrice(
-          currentItem?.productId,
-          currentItem?.quantity
-        );
-
-        // إذا كان هناك سعر مخصص للكمية، نستخدمه كما هو (لا نضربه في الكمية)
-        const itemPrice = discountedPrice
-          ? discountedPrice // نستخدم السعر المخصص للكمية إذا وجد
-          : getPriceBasedOnQuantity(currentItem?.productId, currentItem?.quantity); // أو نستخدم السعر العادي إذا لم يكن هناك سعر مخصص للكمية
-
-        // إذا كان هناك سعر مخصص للكمية، نضيفه مباشرة
-        if (discountedPrice) {
-          return sum + itemPrice;
-        }
-
-        // إذا لم يكن هناك سعر مخصص للكمية، نضرب السعر في الكمية
-        return sum + itemPrice * currentItem.quantity;
-      }, 0)
-    : 0; // إذا كانت العربة فارغة، الإجمالي يكون 0
-
-// حساب إجمالي الكمية في السلة
-const totalQuantityInCart =cartItems?.items?.reduce(
-  (total, item) => total + (item?.quantity || 0),
-  0
-);
-
-
-
-// تحديد قيمة الخصم بناءً على إجمالي الكمية في السلة
-// let discount = 0;
-// if (totalQuantityInCart === 12) {
-//   discount = totalCartAmountBeforeDiscount * 0.2; // خصم 20% إذا كان هناك 12 قطعة بالضبط
-// } else if (totalQuantityInCart === 6) {
-//   discount = totalCartAmountBeforeDiscount * 0.1; // خصم 10% إذا كان هناك 6 قطع بالضبط
-// }
-
-// حساب المجموع النهائي بعد الخصم وإضافة الشحن
-// const totalCartAmount = totalCartAmountBeforeDiscount - discount + shippingCost;
-
-const totalCartAmount = totalCartAmountBeforeDiscount  + shippingCost;
+  
+  // دالة لحساب السعر بناءً على الكمية (سواء كان مخصومًا أم لا)
+  const getPriceForQuantity = (productId, quantity) => {
+    const product = productList?.find((item) => item._id === productId);
+  
+    // البحث عن السعر الخاص بالكمية المحددة
+    const quantityPrice = product?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    );
+  
+    // إذا كان هناك سعر مخصص للكمية، نرجع السعر المخصوم إذا وجد أو السعر العادي للكمية
+    if (quantityPrice) {
+      return quantityPrice.discountedPrice || quantityPrice.price;
+    }
+  
+    // إذا لم يكن هناك سعر خاص بالكمية، نستخدم السعر الأساسي للمنتج
+    return product?.salePrice > 0
+      ? product.salePrice * quantity
+      : product?.price * quantity || 0;
+  };
+  
+  // حساب إجمالي المبلغ في التوتال (دون الشحن)
+  const totalCartAmountBeforeDiscount =
+    cartItems && cartItems.items && cartItems.items.length > 0
+      ? cartItems.items.reduce((sum, currentItem) => {
+          const itemTotal = getPriceForQuantity(
+            currentItem?.productId,
+            currentItem?.quantity
+          );
+          return sum + itemTotal;
+        }, 0)
+      : 0;
+  
+  // حساب إجمالي الكمية في السلة
+  const totalQuantityInCart = cartItems?.items?.reduce(
+    (total, item) => total + (item?.quantity || 0),
+    0
+  );
+  
+  // حساب إجمالي التوتال بعد إضافة تكلفة الشحن
+  const totalCartAmount = totalCartAmountBeforeDiscount + shippingCost;
+  
+  // طباعة القيم للتأكد من صحة الحساب
+  console.log("Total Before Shipping: ", totalCartAmountBeforeDiscount);
+  console.log("Shipping Cost: ", shippingCost);
+  console.log("Final Total: ", totalCartAmount);
+  
  
   // const discount =
   //   cartItems && cartItems.items && cartItems.items.length > 0

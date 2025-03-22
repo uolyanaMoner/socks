@@ -605,6 +605,133 @@
 // export default UserCartItemsContent;
 
 
+// import { Minus, Plus, Trash, Check } from "lucide-react";
+// import { Button } from "../ui/button";
+// import { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useToast } from "../ui/use-toast";
+// import { addToCart, deleteCartItem, fetchCartItems, updateCartQuantity } from "@/store/shop/cart-slice";
+
+// function UserCartItemsContent({ cartItem }) {
+//   const { user } = useSelector((state) => state.auth);
+//   const { productList } = useSelector((state) => state.shopProducts);
+//   const dispatch = useDispatch();
+//   const { toast } = useToast();
+//   const [currentQuantity, setCurrentQuantity] = useState(cartItem?.quantity);
+//   const [selectedColor, setSelectedColor] = useState(cartItem?.color || "");
+
+//   const userId = user?.id || localStorage.getItem("guestUserId");
+
+//   if (!userId) {
+//     const generatedUserId = `guest-${Date.now()}`;
+//     localStorage.setItem("guestUserId", generatedUserId);
+//   }
+
+//   const getDiscountedPrice = (productId, quantity) => {
+//     const product = productList?.find((item) => item._id === productId);
+//     return product?.quantityPrices?.find((item) => item.quantity === quantity)?.discountedPrice || null;
+//   };
+
+//   const getPriceBasedOnQuantity = (productId, quantity) => {
+//     const product = productList?.find((item) => item._id === productId);
+//     const price = product?.salePrice > 0 ? product.salePrice : product?.price;
+//     return price * quantity;
+//   };
+
+//   function handleUpdateQuantity(action) {
+//     let newQuantity = currentQuantity + (action === "plus" ? 1 : -1);
+//     if (newQuantity < 1) {
+//       newQuantity = 1;
+//     }
+//     setCurrentQuantity(newQuantity);
+//     dispatch(updateCartQuantity({ userId, productId: cartItem?.productId, quantity: newQuantity }));
+//   }
+
+//   function handleCartItemDelete(getCartItem) {
+//     dispatch(deleteCartItem({ userId, productId: getCartItem?.productId })).then((data) => {
+//       if (data?.payload?.success) {
+//         toast({
+//           title: "Cart item is deleted successfully",
+//           style: { position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: "20px" },
+//         });
+//       }
+//     });
+//   }
+
+//   function handleColorChange(color) {
+//     if (availableColors.includes(color)) {
+//       setSelectedColor(color);
+//       localStorage.setItem(`selectedColor-${cartItem.productId}`, color);
+//     }
+//   }
+
+//   useEffect(() => {
+//     const storedColor = localStorage.getItem(`selectedColor-${cartItem.productId}`);
+//     if (storedColor) {
+//       setSelectedColor(storedColor);
+//     }
+//   }, [cartItem.productId]);
+
+//   const discountedPrice = getDiscountedPrice(cartItem?.productId, currentQuantity);
+//   const finalPrice = discountedPrice ? discountedPrice : getPriceBasedOnQuantity(cartItem?.productId, currentQuantity);
+
+//   const product = productList?.find((item) => item._id === cartItem?.productId);
+//   const availableColors = product?.color?.split(" and ") || [];
+
+//   return (
+//     <div className="flex items-center space-x-4">
+//       <img src={cartItem?.image?.split(",")[0] || ""} alt={cartItem?.title} className="w-20 h-20 rounded object-cover" />
+//       <div className="flex-1">
+//         <h3 className="font-extrabold">{cartItem?.title}</h3>
+
+//         <div className="flex items-center mt-2 gap-2">
+//           <h3 className="font-extrabold text-sm text-gray-600">Color:</h3>
+//           <div className="flex gap-1">
+//             {availableColors.length > 0 ? (
+//               availableColors.map((color, index) => (
+//                 <div
+//                   key={index}
+//                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer ${
+//                     selectedColor === color ? "border-black" : "border-gray-300"
+//                   }`}
+//                   style={{
+//                     background: color === "black&white" ? "linear-gradient(to right, black 50%, white 50%)" : color,
+//                   }}
+//                   onClick={() => handleColorChange(color)}
+//                 >
+//                   {selectedColor === color && <Check className="w-4 h-4 text-white" />}
+//                 </div>
+//               ))
+//             ) : (
+//               <span>No colors available</span>
+//             )}
+//           </div>
+//         </div>
+
+//         <div className="flex items-center gap-2 mt-1">
+//           <Button variant="outline" className="h-8 w-8 rounded-full" size="icon" disabled={currentQuantity === 1} onClick={() => handleUpdateQuantity("minus")}>
+//             <Minus className="w-4 h-4" />
+//             <span className="sr-only">Decrease</span>
+//           </Button>
+//           <span className="font-semibold">{currentQuantity}</span>
+//           <Button variant="outline" className="h-8 w-8 rounded-full" size="icon" onClick={() => handleUpdateQuantity("plus")}>
+//             <Plus className="w-4 h-4" />
+//             <span className="sr-only">Increase</span>
+//           </Button>
+//         </div>
+//       </div>
+//       <div className="flex flex-col items-end">
+//         <p className="font-semibold">{finalPrice.toFixed(2)} EGP</p>
+
+//         <Trash onClick={() => handleCartItemDelete(cartItem)} className="cursor-pointer mt-1" size={20} />
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default UserCartItemsContent;
+
+
 import { Minus, Plus, Trash, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
@@ -627,17 +754,31 @@ function UserCartItemsContent({ cartItem }) {
     localStorage.setItem("guestUserId", generatedUserId);
   }
 
-  const getDiscountedPrice = (productId, quantity) => {
+  // دالة لحساب سعر الكمية (مخفض أو عادي أو الأساسي)
+  const getPriceForQuantity = (productId, quantity) => {
     const product = productList?.find((item) => item._id === productId);
-    return product?.quantityPrices?.find((item) => item.quantity === quantity)?.discountedPrice || null;
+
+    // البحث عن السعر الخاص بالكمية
+    const quantityPrice = product?.quantityPrices?.find(
+      (item) => item.quantity === quantity
+    );
+
+    // إذا كان هناك سعر مخفض للكمية
+    if (quantityPrice?.discountedPrice) {
+      return quantityPrice.discountedPrice;
+    }
+
+    // إذا كان هناك سعر عادي للكمية
+    if (quantityPrice?.price) {
+      return quantityPrice.price;
+    }
+
+    // إذا لم يكن هناك سعر خاص بالكمية، نستخدم السعر الأساسي
+    const basePrice = product?.salePrice > 0 ? product.salePrice : product?.price;
+    return basePrice * quantity;
   };
 
-  const getPriceBasedOnQuantity = (productId, quantity) => {
-    const product = productList?.find((item) => item._id === productId);
-    const price = product?.salePrice > 0 ? product.salePrice : product?.price;
-    return price * quantity;
-  };
-
+  // تحديث الكمية
   function handleUpdateQuantity(action) {
     let newQuantity = currentQuantity + (action === "plus" ? 1 : -1);
     if (newQuantity < 1) {
@@ -647,6 +788,7 @@ function UserCartItemsContent({ cartItem }) {
     dispatch(updateCartQuantity({ userId, productId: cartItem?.productId, quantity: newQuantity }));
   }
 
+  // حذف المنتج من السلة
   function handleCartItemDelete(getCartItem) {
     dispatch(deleteCartItem({ userId, productId: getCartItem?.productId })).then((data) => {
       if (data?.payload?.success) {
@@ -658,6 +800,7 @@ function UserCartItemsContent({ cartItem }) {
     });
   }
 
+  // تغيير اللون
   function handleColorChange(color) {
     if (availableColors.includes(color)) {
       setSelectedColor(color);
@@ -672,8 +815,7 @@ function UserCartItemsContent({ cartItem }) {
     }
   }, [cartItem.productId]);
 
-  const discountedPrice = getDiscountedPrice(cartItem?.productId, currentQuantity);
-  const finalPrice = discountedPrice ? discountedPrice : getPriceBasedOnQuantity(cartItem?.productId, currentQuantity);
+  const finalPrice = getPriceForQuantity(cartItem?.productId, currentQuantity);
 
   const product = productList?.find((item) => item._id === cartItem?.productId);
   const availableColors = product?.color?.split(" and ") || [];
