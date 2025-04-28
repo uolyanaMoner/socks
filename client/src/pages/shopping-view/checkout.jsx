@@ -18,27 +18,51 @@ function ShoppingCheckout() {
   const [shippingCost, setShippingCost] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState(""); // حفظ طريقة الدفع المختارة
+  const [paymentMethod, setPaymentMethod] = useState("");
   const userId = user?.id || localStorage.getItem("guestUserId");
   const { productList } = useSelector((state) => state.shopProducts);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // إذا لم يكن هناك userId، نقوم بإنشاء userId جديد للزائر
   if (!userId) {
-    const generatedUserId = `guest-${Date.now()}`; // توليد userId فريد للزائر
-    localStorage.setItem("guestUserId", generatedUserId); // حفظه في localStorage
+    const generatedUserId = `guest-${Date.now()}`;
+    localStorage.setItem("guestUserId", generatedUserId);
   }
 
 
-  const handlePaymentSelection = async () => {
-    if (paymentMethod === "") {
-      alert("من فضلك اختر طريقة الدفع");
-      return;
-    }
+  // const handlePaymentSelection = async () => {
+  //   if (paymentMethod === "") {
+  //     alert("من فضلك اختر طريقة الدفع");
+  //     return;
+  //   }
 
-    if (paymentMethod === "paymob") {
-      handlePaymobPayment("paymob");
-    } else if (paymentMethod === "cod") {
-      handlePayment("cod");
+  //   if (paymentMethod === "paymob") {
+  //     handlePaymobPayment("paymob");
+  //   } else if (paymentMethod === "cod") {
+  //     handlePayment("cod");
+  //   }
+  // };
+
+  const handlePaymentSelection = async () => {
+    if (isProcessing) return; // لو العميل ضغط قبل ما تخلص العملية
+    setIsProcessing(true); // قفل الزرار
+
+    try {
+      if (paymentMethod === "") {
+        alert("من فضلك اختر طريقة الدفع");
+        return;
+      }
+
+      if (paymentMethod === "paymob") {
+        await handlePaymobPayment("paymob"); // خلي بالك لو دي async لازم تستناها
+      } else if (paymentMethod === "cod") {
+        await handlePayment("cod");
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      alert("حصل خطأ أثناء معالجة الطلب، حاول تاني.");
+    } finally {
+      setIsProcessing(false); // رجع الزرار مهما حصل
     }
   };
 
@@ -47,54 +71,54 @@ function ShoppingCheckout() {
     setGovernment(selectedProvince);
     setShippingCost(shippingCosts[selectedProvince]);
   };
-  
+
   // دالة لحساب السعر بناءً على الكمية (سواء كان مخصومًا أم لا)
   const getPriceForQuantity = (productId, quantity) => {
     const product = productList?.find((item) => item._id === productId);
-  
+
     // البحث عن السعر الخاص بالكمية المحددة
     const quantityPrice = product?.quantityPrices?.find(
       (item) => item.quantity === quantity
     );
-  
+
     // إذا كان هناك سعر مخصص للكمية، نرجع السعر المخصوم إذا وجد أو السعر العادي للكمية
     if (quantityPrice) {
       return quantityPrice.discountedPrice || quantityPrice.price;
     }
-  
+
     // إذا لم يكن هناك سعر خاص بالكمية، نستخدم السعر الأساسي للمنتج
     return product?.salePrice > 0
       ? product.salePrice * quantity
       : product?.price * quantity || 0;
   };
-  
+
   // حساب إجمالي المبلغ في التوتال (دون الشحن)
   const totalCartAmountBeforeDiscount =
     cartItems && cartItems.items && cartItems.items.length > 0
       ? cartItems.items.reduce((sum, currentItem) => {
-          const itemTotal = getPriceForQuantity(
-            currentItem?.productId,
-            currentItem?.quantity
-          );
-          return sum + itemTotal;
-        }, 0)
+        const itemTotal = getPriceForQuantity(
+          currentItem?.productId,
+          currentItem?.quantity
+        );
+        return sum + itemTotal;
+      }, 0)
       : 0;
-  
+
   // حساب إجمالي الكمية في السلة
   const totalQuantityInCart = cartItems?.items?.reduce(
     (total, item) => total + (item?.quantity || 0),
     0
   );
-  
+
   // حساب إجمالي التوتال بعد إضافة تكلفة الشحن
   const totalCartAmount = totalCartAmountBeforeDiscount + shippingCost;
-  
+
   // طباعة القيم للتأكد من صحة الحساب
   console.log("Total Before Shipping: ", totalCartAmountBeforeDiscount);
   console.log("Shipping Cost: ", shippingCost);
   console.log("Final Total: ", totalCartAmount);
-  
- 
+
+
   // const discount =
   //   cartItems && cartItems.items && cartItems.items.length > 0
   //     ? cartItems.items.reduce((sum, currentItem) => {
@@ -106,7 +130,7 @@ function ShoppingCheckout() {
   //         // حساب إجمالي الكمية في السلة
   //         const totalQuantityInCart = cartItems.items.reduce(
   //           (total, item) => total + (item?.quantity || 0),
-            // 0
+  // 0
   //         );
 
   //         // إذا كانت الكمية 6 من نفس المنتج أو إجمالي الكمية في السلة 6 أو أكثر
@@ -124,18 +148,18 @@ function ShoppingCheckout() {
   //     : 0; // إذا كانت العربة فارغة، لا يوجد خصم
 
 
-      
+
   const handlePaymobPayment = async (method) => {
     if (cartItems.length === 0) {
       toast({
         title: "Your cart is empty. Please add items to proceed",
         variant: "destructive",
-         style: {
-            position: "fixed",
-            left: "50%",
-            transform: "translateX(-50%)",
-            bottom:  "20px" , // أسفل الصفحة عند الموبايل
-          },
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom: "20px", // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -144,12 +168,12 @@ function ShoppingCheckout() {
       toast({
         title: "Please select your government to proceed.",
         variant: "destructive",
-         style: {
-            position: "fixed",
-            left: "50%",
-            transform: "translateX(-50%)",
-            bottom:  "20px" , // أسفل الصفحة عند الموبايل
-          },
+        style: {
+          position: "fixed",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom: "20px", // أسفل الصفحة عند الموبايل
+        },
       });
       return;
     }
@@ -162,7 +186,7 @@ function ShoppingCheckout() {
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          bottom: "20px", // أسفل الصفحة عند الموبايل
         },
       });
       return;
@@ -176,7 +200,7 @@ function ShoppingCheckout() {
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px" , // أسفل الصفحة عند الموبايل
+          bottom: "20px", // أسفل الصفحة عند الموبايل
         },
       });
       return;
@@ -218,7 +242,7 @@ function ShoppingCheckout() {
           addressId: currentSelectedAddress?._id,
           address: currentSelectedAddress?.address,
           city: government,
-          fullName:currentSelectedAddress?.fullName,
+          fullName: currentSelectedAddress?.fullName,
           phone: currentSelectedAddress?.phone,
           email: currentSelectedAddress?.email,
           notes: currentSelectedAddress?.notes,
@@ -417,12 +441,12 @@ function ShoppingCheckout() {
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px",
+          bottom: "20px",
         },
       });
       return;
     }
-  
+
     if (currentSelectedAddress === null) {
       toast({
         title: "Please select one address to proceed.",
@@ -431,12 +455,12 @@ function ShoppingCheckout() {
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px",
+          bottom: "20px",
         },
       });
       return;
     }
-  
+
     if (!government) {
       toast({
         title: "Please select your government to proceed.",
@@ -445,12 +469,12 @@ function ShoppingCheckout() {
           position: "fixed",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom:  "20px",
+          bottom: "20px",
         },
       });
       return;
     }
-  
+
     const billingData = {
       first_name: user?.userName || "N/A",
       last_name: "..",
@@ -464,7 +488,7 @@ function ShoppingCheckout() {
       floor: currentSelectedAddress?.floor || "N/A",
       apartment: currentSelectedAddress?.apartment || "N/A",
     };
-  
+
     const orderData = {
       userId: userId,
       cartId: cartItems?._id,
@@ -502,7 +526,7 @@ function ShoppingCheckout() {
       orderDate: new Date(),
       orderUpdateDate: new Date(),
     };
-  sessionStorage.setItem("orderTime", orderData.orderTime);
+    sessionStorage.setItem("orderTime", orderData.orderTime);
 
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/shop/order/create`,
@@ -519,10 +543,10 @@ function ShoppingCheckout() {
         }),
       }
     );
-  
+
     const result = await response.json();
     console.log("Server Response: ", result);
-  
+
     if (method === "cod") {
       if (result?.success) {
         // حفظ orderId في sessionStorage
@@ -539,13 +563,13 @@ function ShoppingCheckout() {
             position: "fixed",
             left: "50%",
             transform: "translateX(-50%)",
-            bottom:  "20px",
+            bottom: "20px",
           },
         });
       }
     }
   };
-  
+
 
   console.log("Total Before Discount:", totalCartAmountBeforeDiscount);
   console.log("Total with Shipping:", totalCartAmount);
@@ -563,8 +587,8 @@ function ShoppingCheckout() {
         <div className="flex flex-col gap-4">
           {cartItems && cartItems.items && cartItems.items.length > 0
             ? cartItems.items.map((item) => (
-                <UserCartItemsContent cartItem={item} />
-              ))
+              <UserCartItemsContent cartItem={item} />
+            ))
             : null}
           <div className="mt-1">
             <Label>Choose your government</Label>
@@ -610,14 +634,18 @@ function ShoppingCheckout() {
               </span>
             </div>
           </div>
-
           <div className="flex flex-col">
             <div className="mt-4">
-              <Button onClick={handlePaymentSelection} className="w-full">
-                Confirm
+              <Button
+                onClick={handlePaymentSelection}
+                className="w-full"
+                disabled={isProcessing}
+              >
+                {isProcessing ? "Processing..." : "Confirm"}
               </Button>
             </div>
           </div>
+
         </div>
       </div>
     </div>
