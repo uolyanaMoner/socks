@@ -380,7 +380,7 @@ function ProductImageUpload({
 
           return axios
             .post(
-              "https://api.cloudinary.com/v1_1/dud2xcn2l/image/upload",
+              "https://api.cloudinary.com/v1_1/dnuws63di/image/upload",
               formData
             )
             .then((response) => response.data.secure_url);
